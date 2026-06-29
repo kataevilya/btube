@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BTube Beta! - Broadcast Yourself.</title>
-    <link rel="shortcut icon" href="icon.ico" type="image/x-icon">
+    <title>BTube Beta! - Транслируй себя.</title>
+    <link rel="shortcut icon" href="ico.ico" type="image/x-icon">
     <style>
         /* --- КЛАССИЧЕСКИЙ СТИЛЬ BTUBE BETA --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,8 +23,15 @@
         .logo-beta { font-size: 12px; color: #FF9800; font-weight: bold; margin-left: 5px; align-self: flex-start; letter-spacing: 0; }
 
         .auth-bar { font-size: 12px; display: flex; align-items: center; gap: 10px; }
+        .user-menu-wrapper { position: relative; display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
         .user-info-header { display: flex; align-items: center; gap: 6px; font-weight: bold; }
-        .header-avatar { width: 24px; height: 24px; object-fit: cover; border: 1px solid #999; border-radius: 2px; }
+        .header-avatar { width: 26px; height: 26px; object-fit: cover; border: 1px solid #999; border-radius: 2px; }
+        
+        /* Выпадающее меню студии */
+        .avatar-dropdown { display: none; position: absolute; top: 32px; right: 0; background: #FFFFFF; border: 1px solid #CCCCCC; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 1000; width: 160px; border-radius: 2px; }
+        .avatar-dropdown a { display: block; padding: 6px 10px; color: #0033CC; border-bottom: 1px solid #EEEEEE; font-weight: normal; }
+        .avatar-dropdown a:last-child { border-bottom: none; color: #CC0000; }
+        .avatar-dropdown a:hover { background: #EAEFFF; text-decoration: none; }
 
         .search-bar-container { display: flex; justify-content: center; align-items: center; background: #F2F2F2; padding: 6px; border: 1px solid #E4E4E4; margin-bottom: 10px; gap: 5px; }
         .search-input { width: 350px; padding: 3px; font-size: 13px; border: 1px solid #CCCCCC; }
@@ -54,7 +61,7 @@
         .side-box { background: #F4F8FF; border: 1px solid #D2E1F7; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
         .side-box h3 { font-size: 13px; margin-bottom: 5px; color: #222; }
 
-        /* Watch Page */
+        /* Страница просмотра */
         .watch-layout { display: grid; grid-template-columns: 640px 1fr; gap: 20px; }
         .video-player-wrapper { width: 640px; background: #000000; position: relative; user-select: none; }
         .video-player-wrapper video { width: 640px; height: 385px; display: block; }
@@ -84,7 +91,7 @@
 
         .video-desc-text { padding: 10px 5px; font-size: 12px; color: #222; border-bottom: 1px solid #EAEAEA; }
 
-        /* Комменты */
+        /* Комментарии */
         .comments-header { font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; border-bottom: 1px solid #CCC; padding-bottom: 4px; }
         .comment-form { display: flex; gap: 10px; margin-bottom: 15px; }
         .comment-textarea { flex-grow: 1; height: 50px; padding: 5px; border: 1px solid #CCC; font-size: 12px; }
@@ -93,14 +100,14 @@
         .comment-avatar { width: 30px; height: 30px; border: 1px solid #CCC; object-fit: cover; }
         .comment-user { font-weight: bold; color: #0033CC; }
 
-        /* Sidebar */
+        /* Боковая панель */
         .side-video-list { display: flex; flex-direction: column; gap: 10px; }
         .side-video-item { display: flex; gap: 8px; cursor: pointer; }
         .side-thumb { width: 90px; height: 68px; background: #000; border: 1px solid #CCC; overflow: hidden; display: flex; align-items: center; }
         .side-thumb video { width: 100%; height: 100%; object-fit: cover; }
         .side-title { font-weight: bold; color: #0033CC; display: block; font-size: 11px; }
 
-        /* Формы */
+        /* Студия и загрузка */
         .upload-box-old { border: 1px solid #D5D5D5; border-radius: 4px; background: #FAFAFA; max-width: 600px; margin: 30px auto; padding: 20px; }
         .upload-box-old h2 { font-size: 16px; margin-bottom: 15px; border-bottom: 1px solid #CCC; padding-bottom: 5px; }
         .form-group { margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
@@ -112,6 +119,9 @@
         .channel-avatar-big { width: 70px; height: 70px; border: 2px solid #FFF; box-shadow: 0 0 3px rgba(0,0,0,0.2); object-fit: cover; }
         .avatar-upload-label { background: #EEE; border: 1px solid #CCC; padding: 4px 8px; font-size: 11px; display: inline-block; margin-top: 5px; cursor: pointer; border-radius: 2px; }
         
+        .studio-delete-btn { margin-top: 5px; color: #CC0000; font-weight: bold; background: #FFF; border: 1px solid #CC0000; padding: 3px 6px; border-radius: 2px; cursor: pointer; font-size: 11px; width: 100%; text-align: center; }
+        .studio-delete-btn:hover { background: #FFEBEB; }
+
         #footer { text-align: center; margin-top: 40px; padding: 20px; border-top: 1px solid #EAEAEA; color: #666; font-size: 11px; }
     </style>
 </head>
@@ -120,19 +130,18 @@
     <div id="masthead">
         <div class="top-section">
             <a onclick="window.navigateTo('home')" class="logo-container">
-                <img src="btube.png" alt="B" class="logo-img" onerror="this.style.display='none'">
-                <div class="logo">B<span>Tube</span><div class="logo-beta">Beta!</div></div>
+                <img src="ico.png" alt="B" class="logo-img" onerror="this.style.display='none'">
+                <div class="logo">B<span>Tube</span><div class="logo-beta">Бета!</div></div>
             </a>
             <div class="auth-bar" id="authBar"></div>
         </div>
         <div class="search-bar-container">
             <input type="text" id="searchQuery" class="search-input" placeholder="Введите название, описание или теги...">
-            <button class="search-button" onclick="window.handleSearch()">Search</button>
+            <button class="search-button" onclick="window.handleSearch()">Поиск</button>
         </div>
         <ul class="nav-tabs">
-            <li id="tab-home" class="active"><a onclick="window.navigateTo('home')">Home</a></li>
-            <li id="tab-videos"><a onclick="window.navigateTo('videos-list')">Videos</a></li>
-            <li id="tab-channel"><a onclick="window.navigateTo('channel')">My Channel</a></li>
+            <li id="tab-home" class="active"><a onclick="window.navigateTo('home')">Главная</a></li>
+            <li id="tab-videos"><a onclick="window.navigateTo('videos-list')">Видео</a></li>
         </ul>
     </div>
 
@@ -141,17 +150,17 @@
             <div class="home-grid">
                 <div class="left-col">
                     <div class="main-block">
-                        <h2>Featured Videos</h2>
+                        <h2>Рекомендуемые видео</h2>
                         <div class="video-grid-old" id="featured-grid">Подключение к BTube DB...</div>
                     </div>
                 </div>
                 <div class="right-col">
                     <div class="side-box">
-                        <h3>🌐 Динамический Профиль</h3>
-                        <p>Ваша аватарка и ник привязаны к облачному UID. Они мгновенно обновляются на всех ранее загруженных видео, а удалять ролики может только их автор!</p>
+                        <h3>🌐 Уникальная система</h3>
+                        <p>Ваша аватарка обновляется автоматически на всех роликах! Удаление видео вынесено в Творческую студию (кликните по аватару вверху справа).</p>
                     </div>
                     <div class="main-block">
-                        <h2>Recent Uploads (Последние загрузки)</h2>
+                        <h2>Последние загрузки</h2>
                         <div style="padding: 10px;" id="side-most-viewed"></div>
                     </div>
                 </div>
@@ -160,7 +169,7 @@
 
         <div id="view-videos-list" class="view-section">
             <div class="main-block">
-                <h2 id="browse-title">Browse Videos</h2>
+                <h2 id="browse-title">Все видео</h2>
                 <div class="video-grid-old" id="all-videos-grid"></div>
             </div>
         </div>
@@ -186,29 +195,29 @@
                     <div class="watch-meta-box">
                         <h1 class="watch-title" id="watchTitle">Название</h1>
                         <div class="watch-stats-line">
-                            <div id="watchTags" style="color: #555;">Tags: </div>
-                            <div class="view-count" id="watchViews">0 views</div>
+                            <div id="watchTags" style="color: #555;">Теги: </div>
+                            <div class="view-count" id="watchViews">0 просмотров</div>
                         </div>
                         <div class="author-section">
                             <div class="author-info">
                                 <img src="" class="author-avatar" id="watchAvatar" alt="avatar">
-                                <div><span class="author-name" id="watchAuthorName">User</span></div>
+                                <div><span class="author-name" id="watchAuthorName">Пользователь</span></div>
                             </div>
                         </div>
                         <div class="video-desc-text" id="watchDesc">Описание</div>
                         
                         <div class="rating-box">
-                            <button class="rate-btn" id="likeBtn" onclick="window.rateVideo(true)">👍 Like (<span id="likeCount">0</span>)</button>
-                            <button class="rate-btn" id="dislikeBtn" onclick="window.rateVideo(false)">👎 Dislike (<span id="dislikeCount">0</span>)</button>
+                            <button class="rate-btn" id="likeBtn" onclick="window.rateVideo(true)">👍 Нравится (<span id="likeCount">0</span>)</button>
+                            <button class="rate-btn" id="dislikeBtn" onclick="window.rateVideo(false)">👎 Не нравится (<span id="dislikeCount">0</span>)</button>
                             <div class="rating-bar-bg"><div class="rating-bar-likes" id="ratingBarLikes"></div></div>
                         </div>
                     </div>
 
                     <div class="comments-section">
-                        <div class="comments-header">Comments</div>
+                        <div class="comments-header">Комментарии</div>
                         <div class="comment-form">
-                            <textarea class="comment-textarea" id="commentInput" placeholder="Add a comment..."></textarea>
-                            <button class="comment-submit" onclick="window.addComment()">Post</button>
+                            <textarea class="comment-textarea" id="commentInput" placeholder="Оставьте комментарий..."></textarea>
+                            <button class="comment-submit" onclick="window.addComment()">Отправить</button>
                         </div>
                         <div class="comments-list" id="commentsListContainer"></div>
                     </div>
@@ -222,13 +231,13 @@
 
         <div id="view-upload" class="view-section">
             <div class="upload-box-old">
-                <h2>Upload Video File to BTube</h2>
+                <h2>Загрузить видеофайл на BTube</h2>
                 <div class="form-group">
-                    <label>Video Title:</label>
-                    <input type="text" id="upTitle" placeholder="Enter video title...">
+                    <label>Название видео:</label>
+                    <input type="text" id="upTitle" placeholder="Введите название...">
                 </div>
                 <div class="form-group">
-                    <label>Category (Категория):</label>
+                    <label>Категория:</label>
                     <select id="upCategory">
                         <option value="Игры (Games)">Игры (Games)</option>
                         <option value="Развлечения (Entertainment)">Развлечения (Entertainment)</option>
@@ -237,18 +246,18 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Description:</label>
-                    <textarea id="upDesc" placeholder="Describe your video content..."></textarea>
+                    <label>Описание:</label>
+                    <textarea id="upDesc" placeholder="Опишите ваше видео..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Tags (через запятую):</label>
+                    <label>Теги (через запятую):</label>
                     <input type="text" id="upTags" placeholder="gaming, retro, 2007">
                 </div>
                 <div class="form-group">
-                    <label>Select Video File:</label>
+                    <label>Выберите видеофайл:</label>
                     <input type="file" id="upFile" accept="video/*">
                 </div>
-                <button class="upload-btn-submit" id="uploadActionBtn" onclick="window.handleVideoUpload()">Upload Video</button>
+                <button class="upload-btn-submit" id="uploadActionBtn" onclick="window.handleVideoUpload()">Опубликовать видео</button>
                 <div id="uploadStatus" style="margin-top:10px; color:#009900; font-weight:bold;"></div>
             </div>
         </div>
@@ -257,22 +266,30 @@
             <div class="channel-header">
                 <img src="" class="channel-avatar-big" id="chanAvatar" alt="Avatar">
                 <div>
-                    <h2 id="chanName">Username</h2>
+                    <h2 id="chanName">Никнейм</h2>
                     <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
                         <div>
-                            <input type="text" id="editProfileName" placeholder="New nickname" style="padding: 3px; font-size: 12px; width: 180px;">
-                            <button class="rate-btn" onclick="window.updateProfileName()" style="padding: 3px 8px;">Save Name</button>
+                            <input type="text" id="editProfileName" placeholder="Новый ник" style="padding: 3px; font-size: 12px; width: 180px;">
+                            <button class="rate-btn" onclick="window.updateProfileName()" style="padding: 3px 8px;">Сохранить имя</button>
                         </div>
                         <label class="avatar-upload-label" style="width: max-content;">
-                            Change Custom Avatar
+                            Изменить аватарку
                             <input type="file" accept="image/*" style="display:none;" onchange="window.handleAvatarUpload(event)">
                         </label>
                     </div>
                 </div>
             </div>
             <div class="main-block">
-                <h2>Your Uploads (Привязаны к вашему UID)</h2>
+                <h2>Ваш публичный профиль</h2>
                 <div class="video-grid-old" id="user-uploaded-grid"></div>
+            </div>
+        </div>
+
+        <div id="view-studio" class="view-section">
+            <div class="main-block">
+                <h2>Творческая студия — Управление видео (Доступно только автору)</h2>
+                <div style="padding: 15px;" id="studio-empty-msg"></div>
+                <div class="video-grid-old" id="studio-uploaded-grid"></div>
             </div>
         </div>
     </div>
@@ -305,13 +322,26 @@
 
         const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='50' height='50' fill='%23cccccc'/><circle cx='25' cy='20' r='10' fill='%23666666'/><path d='M 5,45 Q 25,25 45,45 Z' fill='%23666666'/></svg>";
 
-        window.currentUser = { loggedIn: false, name: "Guest", avatar: DEFAULT_AVATAR, uid: null };
+        window.currentUser = { loggedIn: false, name: "Гость", avatar: DEFAULT_AVATAR, uid: null };
         window.globalVideos = [];
-        window.allUsersData = {}; // Локальный кэш всех юзеров для динамических аватарок
+        window.allUsersData = {}; 
         window.currentVideoId = null;
         let searchQueryStr = "";
 
-        // Отслеживание юзера и синхронизация профиля
+        // Скрытие меню при клике на другие области страницы
+        document.addEventListener('click', () => {
+            const menu = document.getElementById('avatarMenu');
+            if(menu) menu.style.display = 'none';
+        });
+
+        window.toggleAvatarMenu = function(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('avatarMenu');
+            if(menu) {
+                menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+            }
+        };
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 window.currentUser.uid = user.uid;
@@ -322,21 +352,20 @@
                 
                 if (snapshot.exists()) {
                     const dbData = snapshot.val();
-                    window.currentUser.name = dbData.name || user.displayName || "Google User";
+                    window.currentUser.name = dbData.name || user.displayName || "Google Юзер";
                     window.currentUser.avatar = dbData.avatar || user.photoURL || DEFAULT_AVATAR;
                 } else {
-                    window.currentUser.name = user.displayName || "Google User";
+                    window.currentUser.name = user.displayName || "Google Юзер";
                     window.currentUser.avatar = user.photoURL || DEFAULT_AVATAR;
                     await set(userRef, { name: window.currentUser.name, avatar: window.currentUser.avatar });
                 }
             } else {
-                window.currentUser = { loggedIn: false, name: "Guest", avatar: DEFAULT_AVATAR, uid: null };
+                window.currentUser = { loggedIn: false, name: "Гость", avatar: DEFAULT_AVATAR, uid: null };
             }
             renderAuthBar();
             renderViews();
         });
 
-        // Подписываемся на базу пользователей, чтобы аватарки обновлялись на всех видео налету!
         onValue(ref(database, 'btube_users'), (snapshot) => {
             window.allUsersData = snapshot.val() || {};
             renderViews();
@@ -358,7 +387,7 @@
             await set(ref(database, 'btube_users/' + window.currentUser.uid + '/name'), newName);
             renderAuthBar();
             renderViews();
-            alert("Имя синхронизировано!");
+            alert("Имя обновлено!");
         };
 
         window.handleAvatarUpload = function(event) {
@@ -370,7 +399,7 @@
                 await set(ref(database, 'btube_users/' + window.currentUser.uid + '/avatar'), e.target.result);
                 document.getElementById('chanAvatar').src = e.target.result;
                 renderAuthBar();
-                alert("Аватар синхронизирован!");
+                alert("Аватарка обновлена на всех видео!");
             };
             reader.readAsDataURL(file);
         };
@@ -379,18 +408,28 @@
             const authBar = document.getElementById('authBar');
             if (window.currentUser.loggedIn) {
                 authBar.innerHTML = `
-                    <div class="user-info-header"><img src="${window.currentUser.avatar}" class="header-avatar"><span>${window.currentUser.name}</span></div>
-                    <a onclick="window.navigateTo('upload')" style="font-weight:bold; color:#FF0000;">Upload</a> | <a onclick="window.handleLogOut()">Sign Out</a>
+                    <a onclick="window.navigateTo('upload')" style="font-weight:bold; margin-right: 5px;">Загрузить</a> | 
+                    <div class="user-menu-wrapper" onclick="window.toggleAvatarMenu(event)">
+                        <div class="user-info-header">
+                            <img src="${window.currentUser.avatar}" class="header-avatar">
+                            <span>${window.currentUser.name} ▼</span>
+                        </div>
+                        <div id="avatarMenu" class="avatar-dropdown">
+                            <a onclick="window.navigateTo('studio')">🎬 Творческая студия</a>
+                            <a onclick="window.navigateTo('channel')">👤 Мой канал</a>
+                            <a onclick="window.handleLogOut()">❌ Выйти</a>
+                        </div>
+                    </div>
                 `;
             } else {
-                authBar.innerHTML = `<a onclick="window.navigateTo('upload')">Upload</a> | <a onclick="window.handleGoogleSignIn()" style="font-weight:bold; color: #4285F4;">Sign In</a>`;
+                authBar.innerHTML = `<a onclick="window.navigateTo('upload')">Загрузить</a> | <a onclick="window.handleGoogleSignIn()" style="font-weight:bold; color: #4285F4;">Войти</a>`;
             }
         }
 
         window.handleSearch = function() {
             const q = document.getElementById('searchQuery').value.trim().toLowerCase();
             searchQueryStr = q;
-            document.getElementById('browse-title').innerText = q ? `Search Results for: "${q}"` : "Browse Videos";
+            document.getElementById('browse-title').innerText = q ? `Результаты поиска для: "${q}"` : "Все видео";
             window.navigateTo('videos-list');
         };
 
@@ -406,13 +445,13 @@
             renderViews();
         });
 
-        // Функция удаления видео (Доступно только автору роликов)
+        // Удаление видео — Срабатывает только из панели Творческой Студии автора
         window.deleteVideo = async function(id) {
-            if (!confirm("Вы действительно хотите удалить это видео?")) return;
+            if (!confirm("Вы действительно хотите безвозвратно удалить это видео?")) return;
             try {
                 await remove(ref(database, 'btube_beta_videos/' + id));
                 alert("Видео успешно удалено!");
-                window.navigateTo('home');
+                renderViews();
             } catch (err) {
                 alert("Ошибка удаления: " + err.message);
             }
@@ -426,10 +465,10 @@
             const file = document.getElementById('upFile').files[0];
             const statusBox = document.getElementById('uploadStatus');
 
-            if (!title || !file) return alert("Заполните поля!");
-            if (!window.currentUser.loggedIn) return alert("Войдите в аккаунт!");
+            if (!title || !file) return alert("Заполните обязательные поля!");
+            if (!window.currentUser.loggedIn) return alert("Пожалуйста, войдите в аккаунт!");
             
-            statusBox.innerText = "Загрузка файла...";
+            statusBox.innerText = "Загрузка файла видеоролика...";
             const formData = new FormData();
             formData.append("file", file);
 
@@ -439,7 +478,7 @@
                 
                 if (result?.data?.url) {
                     let downloadUrl = result.data.url.replace("https://tmpfiles.org/", "https://tmpfiles.org/dl/");
-                    statusBox.innerText = "Сохранение...";
+                    statusBox.innerText = "Регистрация в базе данных...";
 
                     const newVideoObj = {
                         title: title,
@@ -457,22 +496,16 @@
                     };
 
                     await push(videosRef, newVideoObj);
-                    statusBox.innerText = "Успешно!";
+                    statusBox.innerText = "Успешно опубликовано!";
                     setTimeout(() => window.navigateTo('home'), 1000);
                 }
-            } catch (err) { statusBox.innerText = "Ошибка: " + err.message; }
+            } catch (err) { statusBox.innerText = "Ошибка загрузки: " + err.message; }
         };
 
         function createCard(v) {
-            // Динамически подтягиваем актуальные имя и аватарку из кэша профилей `allUsersData` по UID автора
             const authorData = window.allUsersData[v.authorUid] || {};
             const currentAvatar = authorData.avatar || v.authorAvatar || DEFAULT_AVATAR;
             const currentName = authorData.name || v.author || "User";
-
-            // Кнопка удаления рендерится только в том случае, если текущий залогиненный UID совпадает с UID автора видео
-            const deleteBtnHtml = (window.currentUser.loggedIn && window.currentUser.uid === v.authorUid)
-                ? `<button onclick="event.stopPropagation(); window.deleteVideo('${v.id}')" style="margin-top:5px; color:red; font-weight:bold; background:#fff; border:1px solid red; padding:1px 4px; border-radius:2px; cursor:pointer;">Удалить видео</button>`
-                : '';
 
             return `
                 <div class="video-item-old" onclick="window.openWatch('${v.id}')">
@@ -480,13 +513,27 @@
                     <span class="v-title">${v.title}</span>
                     <div class="v-meta" style="display:flex; align-items:center; gap:5px; margin-top:3px;">
                         <img src="${currentAvatar}" style="width:16px; height:16px; object-fit:cover; border-radius:2px; border:1px solid #ccc;">
-                        <span>by <b>${currentName}</b></span>
+                        <span>от <b>${currentName}</b></span>
                     </div>
                     <div class="v-meta">
                         <span class="cat-badge" style="margin: 3px 0;">${v.category || 'Игры'}</span><br>
-                        ${v.views || 0} views
-                        ${deleteBtnHtml}
+                        ${v.views || 0} просмотров
                     </div>
+                </div>
+            `;
+        }
+
+        // Отрисовка карточек для Творческой студии (с возможностью удаления ролика)
+        function createStudioCard(v) {
+            const authorData = window.allUsersData[v.authorUid] || {};
+            const currentAvatar = authorData.avatar || v.authorAvatar || DEFAULT_AVATAR;
+
+            return `
+                <div class="video-item-old" style="border: 1px dashed #CCC; padding: 5px; background: #FFF;">
+                    <div class="thumb-container" onclick="window.openWatch('${v.id}')"><video src="${v.fileUrl}" preload="metadata" muted></video></div>
+                    <span class="v-title">${v.title}</span>
+                    <div class="v-meta">Просмотров: <b>${v.views || 0}</b></div>
+                    <button class="studio-delete-btn" onclick="window.deleteVideo('${v.id}')">Удалить видео</button>
                 </div>
             `;
         }
@@ -511,7 +558,16 @@
             document.getElementById('chanAvatar').src = window.currentUser.avatar;
 
             const myVideos = window.globalVideos.filter(v => v.authorUid === window.currentUser.uid);
-            document.getElementById('user-uploaded-grid').innerHTML = myVideos.length ? myVideos.map(createCard).join('') : "<p>У вас еще нет загрузок.</p>";
+            document.getElementById('user-uploaded-grid').innerHTML = myVideos.length ? myVideos.map(createCard).join('') : "<p>Вы еще не загрузили ни одного видео.</p>";
+
+            // Рендер Студии управления видео автора
+            if(window.currentUser.loggedIn) {
+                document.getElementById('studio-empty-msg').innerText = myVideos.length ? "" : "У вас пока нет загруженных видео для управления.";
+                document.getElementById('studio-uploaded-grid').innerHTML = myVideos.map(createStudioCard).join('');
+            } else {
+                document.getElementById('studio-uploaded-grid').innerHTML = "";
+                document.getElementById('studio-empty-msg').innerText = "Пожалуйста, авторизуйтесь, чтобы зайти в творческую студию.";
+            }
 
             if (window.currentVideoId) {
                 const updatedVideo = window.globalVideos.find(v => v.id === window.currentVideoId);
@@ -522,17 +578,19 @@
         window.navigateTo = function(id) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-tabs li').forEach(el => el.classList.remove('active'));
-            document.getElementById('view-' + id).classList.add('active');
+            
+            const viewTarget = document.getElementById('view-' + id);
+            if(viewTarget) viewTarget.classList.add('active');
             
             if(id === 'home') document.getElementById('tab-home').classList.add('active');
             if(id === 'videos-list') document.getElementById('tab-videos').classList.add('active');
-            if(id === 'channel') document.getElementById('tab-channel').classList.add('active');
 
             if(id !== 'watch') document.getElementById('mainVideo').pause();
             if(id !== 'videos-list') searchQueryStr = ""; 
             renderViews();
         };
 
+        // Логика просмотра: СТРОГО 1 УНИКАЛЬНЫЙ ПРОСМОТР НА 1 ЧЕЛОВЕКА
         window.openWatch = async function(id) {
             window.currentVideoId = id;
             const video = window.globalVideos.find(v => v.id === id);
@@ -543,7 +601,28 @@
             vEl.src = video.fileUrl;
             vEl.load();
 
-            await set(ref(database, 'btube_beta_videos/' + id + '/views'), (video.views || 0) + 1);
+            let allowIncrement = false;
+
+            if (window.currentUser.loggedIn) {
+                // Если юзер вошел: проверяем в БД в ветке этого видео по его UID
+                const uid = window.currentUser.uid;
+                if (!video.viewers || !video.viewers[uid]) {
+                    allowIncrement = true;
+                    // Помечаем в базе, что этот UID посмотрел видео
+                    await set(ref(database, `btube_beta_videos/${id}/viewers/${uid}`), true);
+                }
+            } else {
+                // Если гость: проверяем по localStorage браузера, чтобы не спамил F5
+                const localKey = `btube_guest_viewed_${id}`;
+                if (!localStorage.getItem(localKey)) {
+                    allowIncrement = true;
+                    localStorage.setItem(localKey, 'true');
+                }
+            }
+
+            if (allowIncrement) {
+                await set(ref(database, 'btube_beta_videos/' + id + '/views'), (video.views || 0) + 1);
+            }
         };
 
         function renderWatchMeta(video) {
@@ -552,8 +631,8 @@
             const currentName = authorData.name || video.author || "User";
 
             document.getElementById('watchTitle').innerText = `[${video.category || 'Игры'}] ${video.title}`;
-            document.getElementById('watchViews').innerText = `${video.views} views`;
-            document.getElementById('watchTags').innerText = `Tags: ${video.tags}`;
+            document.getElementById('watchViews').innerText = `${video.views || 0} просмотров`;
+            document.getElementById('watchTags').innerText = `Теги: ${video.tags}`;
             document.getElementById('watchDesc').innerText = video.desc;
             document.getElementById('watchAuthorName').innerText = currentName;
             document.getElementById('watchAvatar').src = currentAvatar;
@@ -573,10 +652,10 @@
                     <img src="${c.avatar || DEFAULT_AVATAR}" class="comment-avatar">
                     <div><span class="comment-user">${c.user}</span><div class="comment-text">${c.text}</div></div>
                 </div>
-            `).join('') : "<p style='color:#666;'>No comments yet.</p>";
+            `).join('') : "<p style='color:#666;'>Комментариев нет.</p>";
             document.getElementById('commentsListContainer').innerHTML = commentsHtml;
 
-            // РЕКОМЕНДАЦИИ
+            // СИСТЕМА РЕКОМЕНДАЦИЙ
             const currentTags = video.tags.toLowerCase().split(',').map(t => t.trim());
             const recommendations = window.globalVideos
                 .filter(v => v.id !== video.id) 
@@ -593,7 +672,7 @@
             document.getElementById('suggestionsContainer').innerHTML = recommendations.map(r => `
                 <div class="side-video-item" onclick="window.openWatch('${r.video.id}')">
                     <div class="side-thumb"><video src="${r.video.fileUrl}" muted></video></div>
-                    <div><span class="side-title">${r.video.title}</span><span style="font-size:10px; color:#666;">${r.video.views} views</span></div>
+                    <div><span class="side-title">${r.video.title}</span><span style="font-size:10px; color:#666;">${r.video.views || 0} просмотров</span></div>
                 </div>
             `).join('');
         }
@@ -642,7 +721,7 @@
             document.getElementById('commentInput').value = "";
         };
 
-        // ПЛЕЕР
+        // ПЛЕЕР И УПРАВЛЕНИЕ
         const vEl = document.getElementById('mainVideo');
         document.getElementById('playBtn').onclick = () => {
             vEl.paused ? vEl.play() : vEl.pause();
