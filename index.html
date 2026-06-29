@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube - Broadcast Yourself.</title>
+    <title>BTube Beta! - Broadcast Yourself.</title>
     <style>
-        /* --- КЛАССИЧЕСКИЙ СТИЛЬ YOUTUBE (2007-2010) --- */
+        /* --- КЛАССИЧЕСКИЙ СТИЛЬ BTUBE BETA --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: Arial, Helvetica, sans-serif; background: #FFFFFF; color: #333333; font-size: 12px; line-height: 1.3; }
         a { color: #0033CC; text-decoration: none; cursor: pointer; }
@@ -15,13 +15,13 @@
         #masthead { background: #FFFFFF; padding: 15px 20px 5px 20px; border-bottom: 1px solid #EAEAEA; min-width: 800px; }
         .top-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         
-        .logo { display: flex; align-items: center; text-decoration: none; font-weight: bold; font-size: 24px; letter-spacing: -1px; color: #000; font-family: "Arial Black", Gadget, sans-serif; }
-        .logo span { background: #FF0000; color: #FFFFFF; padding: 2px 6px; border-radius: 5px; margin-left: 2px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2); }
-        .logo-sub { font-size: 10px; font-family: Arial, sans-serif; font-weight: normal; color: #666; margin-left: 5px; align-self: flex-end; padding-bottom: 3px; }
+        .logo { display: flex; align-items: center; text-decoration: none; font-weight: bold; font-size: 26px; letter-spacing: -1px; color: #000; font-family: "Arial Black", Gadget, sans-serif; }
+        .logo span { background: #FF0000; color: #FFFFFF; padding: 2px 8px; border-radius: 5px; margin-left: 2px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2); }
+        .logo-beta { font-size: 12px; color: #FF9800; font-weight: bold; margin-left: 5px; align-self: flex-start; letter-spacing: 0; }
 
         .auth-bar { font-size: 12px; display: flex; align-items: center; gap: 10px; }
         .user-info-header { display: flex; align-items: center; gap: 6px; font-weight: bold; }
-        .header-avatar { width: 20px; height: 20px; object-fit: cover; border: 1px solid #999; }
+        .header-avatar { width: 24px; height: 24px; object-fit: cover; border: 1px solid #999; border-radius: 2px; }
 
         .search-bar-container { display: flex; justify-content: center; align-items: center; background: #F2F2F2; padding: 6px; border: 1px solid #E4E4E4; margin-bottom: 10px; gap: 5px; }
         .search-input { width: 350px; padding: 3px; font-size: 13px; border: 1px solid #CCCCCC; }
@@ -45,10 +45,10 @@
         .thumb-container { position: relative; width: 100%; aspect-ratio: 4/3; background: #000; border: 1px solid #CCCCCC; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .thumb-container video { width: 100%; height: 100%; object-fit: cover; }
         .video-item-old .v-title { font-weight: bold; color: #0033CC; margin-top: 4px; font-size: 12px; display: block; }
-        .video-item-old .v-meta { color: #666666; font-size: 11px; margin-top: 2px; }
+        .video-item-old .v-meta { color: #666666; font-size: 11px; margin-top: 2px; line-height: 1.4; }
+        .cat-badge { background: #E0E0E0; color: #333; padding: 1px 4px; border-radius: 2px; font-size: 9px; font-weight: bold; display: inline-block; }
 
         .side-box { background: #FFFEEA; border: 1px solid #F0E7A4; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
-        .side-box h3 { font-size: 12px; margin-bottom: 5px; color: #555; }
 
         /* Watch Page */
         .watch-layout { display: grid; grid-template-columns: 640px 1fr; gap: 20px; }
@@ -58,63 +58,57 @@
         .play-btn { background: none; border: none; color: #FFF; font-size: 14px; width: 25px; text-align: left; margin-right: 5px; }
         .progress-container { flex-grow: 1; height: 8px; background: #333333; position: relative; margin: 0 10px; cursor: pointer; border-radius: 1px; }
         .progress-line { position: absolute; left: 0; top: 0; height: 100%; background: #FF0000; width: 0%; }
-        .progress-handle { position: absolute; top: -3px; width: 14px; height: 14px; background: #FFFFFF; border: 1px solid #333; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,0.5); transform: translateX(-50%); pointer-events: none; }
+        .progress-handle { position: absolute; top: -3px; width: 14px; height: 14px; background: #FFFFFF; border: 1px solid #333; border-radius: 50%; transform: translateX(-50%); pointer-events: none; }
         .time-disp { white-space: nowrap; margin-right: 10px; }
-        .volume-container { display: flex; align-items: center; gap: 5px; }
-        .volume-slider { width: 50px; cursor: pointer; accent-color: #CCCCCC; }
-
+        
         .watch-meta-box { border: 1px solid #D5D5D5; border-top: none; background: #FAFAFA; padding: 10px; margin-bottom: 15px; }
         .watch-title { font-size: 18px; font-weight: normal; margin-bottom: 8px; color: #000; }
         .watch-stats-line { display: flex; justify-content: space-between; border-bottom: 1px solid #EAEAEA; padding-bottom: 8px; margin-bottom: 8px; }
         .view-count { font-size: 18px; font-weight: bold; color: #333; }
         
         .author-section { display: flex; justify-content: space-between; background: #FFF; border: 1px solid #EAEAEA; padding: 8px; border-radius: 4px; }
-        .author-info { display: flex; gap: 10px; }
+        .author-info { display: flex; gap: 10px; align-items: center; }
         .author-avatar { width: 35px; height: 35px; border: 1px solid #CCC; object-fit: cover; }
         .author-name { font-weight: bold; color: #0033CC; font-size: 13px; }
-        .btn-subscribe { background: linear-gradient(#FFDC52, #FFC412); border: 1px solid #DDA600; font-weight: bold; padding: 4px 10px; border-radius: 3px; font-size: 12px; }
 
+        /* Бесконечные лайки */
         .rating-box { display: flex; align-items: center; gap: 10px; margin-top: 10px; justify-content: flex-end; }
-        .rate-btn { background: #F2F2F2; border: 1px solid #CCCCCC; padding: 3px 8px; font-size: 11px; font-weight: bold; border-radius: 2px; }
+        .rate-btn { background: #F2F2F2; border: 1px solid #CCCCCC; padding: 5px 10px; font-size: 12px; font-weight: bold; border-radius: 2px; transition: transform 0.1s; }
+        .rate-btn:active { transform: scale(1.1); background: #E0E0E0; }
         .rating-bar-bg { width: 100px; height: 4px; background: #CC0000; position: relative; border-radius: 2px; overflow: hidden; }
         .rating-bar-likes { height: 100%; background: #009900; width: 50%; }
 
         .video-desc-text { padding: 10px 5px; font-size: 12px; color: #222; border-bottom: 1px solid #EAEAEA; }
 
+        /* Комменты */
         .comments-header { font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; border-bottom: 1px solid #CCC; padding-bottom: 4px; }
         .comment-form { display: flex; gap: 10px; margin-bottom: 15px; }
         .comment-textarea { flex-grow: 1; height: 50px; padding: 5px; border: 1px solid #CCC; font-size: 12px; }
         .comment-submit { background: #EEEEEE; border: 1px solid #CCCCCC; font-weight: bold; padding: 0 15px; }
-        .comments-list { display: flex; flex-direction: column; gap: 12px; }
-        .comment-item { display: flex; gap: 10px; border-bottom: 1px dashed #EEE; padding-bottom: 8px; }
+        .comment-item { display: flex; gap: 10px; border-bottom: 1px dashed #EEE; padding-bottom: 8px; margin-bottom: 8px; }
         .comment-avatar { width: 30px; height: 30px; border: 1px solid #CCC; object-fit: cover; }
-        .comment-user { font-weight: bold; color: #0033CC; margin-right: 5px; }
+        .comment-user { font-weight: bold; color: #0033CC; }
 
-        .watch-sidebar h3 { font-size: 13px; border-bottom: 1px solid #CCC; padding-bottom: 3px; margin-bottom: 10px; color: #444; }
+        /* Sidebar */
         .side-video-list { display: flex; flex-direction: column; gap: 10px; }
         .side-video-item { display: flex; gap: 8px; cursor: pointer; }
         .side-thumb { width: 90px; height: 68px; background: #000; border: 1px solid #CCC; overflow: hidden; display: flex; align-items: center; }
         .side-thumb video { width: 100%; height: 100%; object-fit: cover; }
-        .side-title { font-weight: bold; color: #0033CC; display: block; max-height: 28px; overflow: hidden; font-size: 11px; }
+        .side-title { font-weight: bold; color: #0033CC; display: block; font-size: 11px; }
 
-        /* Upload & Channel */
+        /* Формы загрузки и кастомизации */
         .upload-box-old { border: 1px solid #D5D5D5; border-radius: 4px; background: #FAFAFA; max-width: 600px; margin: 30px auto; padding: 20px; }
         .upload-box-old h2 { font-size: 16px; margin-bottom: 15px; border-bottom: 1px solid #CCC; padding-bottom: 5px; }
         .form-group { margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
-        .form-group input[type="text"], .form-group textarea { width: 100%; padding: 5px; border: 1px solid #CCC; font-size: 12px; }
+        .form-group input[type="text"], .form-group textarea, .form-group select { width: 100%; padding: 6px; border: 1px solid #CCC; font-size: 12px; }
         .form-group textarea { height: 80px; }
-        .upload-btn-submit { background: linear-gradient(#0078FF, #0053BA); border: 1px solid #00459B; color: #FFF; font-weight: bold; padding: 8px 16px; border-radius: 3px; font-size: 13px; margin-top: 10px; align-self: flex-start; }
+        .upload-btn-submit { background: linear-gradient(#0078FF, #0053BA); border: 1px solid #00459B; color: #FFF; font-weight: bold; padding: 8px 16px; border-radius: 3px; font-size: 13px; margin-top: 10px; cursor: pointer; }
 
         .channel-header { background: #F0F4FA; border: 1px solid #D7E3F4; padding: 15px; border-radius: 4px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         .channel-avatar-big { width: 70px; height: 70px; border: 2px solid #FFF; box-shadow: 0 0 3px rgba(0,0,0,0.2); object-fit: cover; }
-        .avatar-upload-label { background: #EEE; border: 1px solid #CCC; padding: 3px 8px; font-size: 11px; display: inline-block; margin-top: 5px; cursor: pointer; }
-
-        /* Modal */
-        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-overlay.active { display: flex; }
-        .google-box { background: #FFFFFF; width: 360px; border: 1px solid #D5D5D5; border-radius: 8px; padding: 30px 25px; text-align: center; }
-        .google-input { width: 100%; padding: 10px; border: 1px solid #dadce0; border-radius: 4px; font-size: 14px; margin-bottom: 15px; }
-        .google-btn { background: #1a73e8; color: #FFF; border: none; padding: 10px 24px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        .avatar-upload-label { background: #EEE; border: 1px solid #CCC; padding: 4px 8px; font-size: 11px; display: inline-block; margin-top: 5px; cursor: pointer; border-radius: 2px; }
+        
+        #footer { text-align: center; margin-top: 40px; padding: 20px; border-top: 1px solid #EAEAEA; color: #666; font-size: 11px; }
     </style>
 </head>
 <body>
@@ -122,8 +116,8 @@
     <div id="masthead">
         <div class="top-section">
             <a onclick="window.navigateTo('home')" class="logo">
-                You<span>Tube</span>
-                <div class="logo-sub">Broadcast Yourself™</div>
+                B<span>Tube</span>
+                <div class="logo-beta">Beta!</div>
             </a>
             <div class="auth-bar" id="authBar"></div>
         </div>
@@ -144,16 +138,16 @@
                 <div class="left-col">
                     <div class="main-block">
                         <h2>Featured Videos</h2>
-                        <div class="video-grid-old" id="featured-grid">Загрузка базы Firebase...</div>
+                        <div class="video-grid-old" id="featured-grid">Подключение к BTube DB...</div>
                     </div>
                 </div>
                 <div class="right-col">
                     <div class="side-box">
-                        <h3>Global Sync</h3>
-                        <p>Всё, что вы загружаете, сохраняется в Firebase и доступно всем!</p>
+                        <h3>🔥 Фарм Лайков!</h3>
+                        <p>Кликай по лайкам сколько хочешь! Ограничений нет, набивай просмотры и рейтинг!</p>
                     </div>
                     <div class="main-block">
-                        <h2>All Videos</h2>
+                        <h2>All Uploads</h2>
                         <div style="padding: 10px;" id="side-most-viewed"></div>
                     </div>
                 </div>
@@ -180,7 +174,6 @@
                             </div>
                             <div class="time-disp" id="timeDisplay">0:00 / 0:00</div>
                             <div class="volume-container">
-                                <button class="volume-btn" id="volumeBtn">🔊</button>
                                 <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.1" value="1">
                             </div>
                         </div>
@@ -195,15 +188,14 @@
                         <div class="author-section">
                             <div class="author-info">
                                 <img src="" class="author-avatar" id="watchAvatar" alt="avatar">
-                                <div>
-                                    <span class="author-name" id="watchAuthorName">User</span>
-                                </div>
+                                <div><span class="author-name" id="watchAuthorName">User</span></div>
                             </div>
                         </div>
                         <div class="video-desc-text" id="watchDesc">Описание</div>
+                        
                         <div class="rating-box">
-                            <button class="rate-btn" onclick="window.rateVideo(true)">👍 Like (<span id="likeCount">0</span>)</button>
-                            <button class="rate-btn" onclick="window.rateVideo(false)">👎 Dislike (<span id="dislikeCount">0</span>)</button>
+                            <button class="rate-btn" onclick="window.rateVideo(true)">👍 Нафармить Лайк (<span id="likeCount">0</span>)</button>
+                            <button class="rate-btn" onclick="window.rateVideo(false)">👎 Дизлайк (<span id="dislikeCount">0</span>)</button>
                             <div class="rating-bar-bg"><div class="rating-bar-likes" id="ratingBarLikes"></div></div>
                         </div>
                     </div>
@@ -226,18 +218,27 @@
 
         <div id="view-upload" class="view-section">
             <div class="upload-box-old">
-                <h2>Upload Video File to Global DB</h2>
+                <h2>Upload Video File to BTube</h2>
                 <div class="form-group">
                     <label>Video Title:</label>
                     <input type="text" id="upTitle" placeholder="Enter video title...">
+                </div>
+                <div class="form-group">
+                    <label>Category (Категория):</label>
+                    <select id="upCategory">
+                        <option value="Игры (Games)">Игры (Games)</option>
+                        <option value="Развлечения (Entertainment)">Развлечения (Entertainment)</option>
+                        <option value="Музыка (Music)">Музыка (Music)</option>
+                        <option value="Влоги (Vlogs)">Влоги (Vlogs)</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Description:</label>
                     <textarea id="upDesc" placeholder="Describe your video content..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Tags (comma separated):</label>
-                    <input type="text" id="upTags" placeholder="classic, 2007">
+                    <label>Tags:</label>
+                    <input type="text" id="upTags" placeholder="gaming, retro, 2007">
                 </div>
                 <div class="form-group">
                     <label>Select Video File:</label>
@@ -253,30 +254,33 @@
                 <img src="" class="channel-avatar-big" id="chanAvatar" alt="Avatar">
                 <div>
                     <h2 id="chanName">Username</h2>
-                    <label class="avatar-upload-label">
-                        Change Picture (Syncs globally)
-                        <input type="file" accept="image/*" style="display:none;" onchange="window.handleAvatarUpload(event)">
-                    </label>
+                    <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+                        <div>
+                            <input type="text" id="editProfileName" placeholder="New nickname" style="padding: 3px; font-size: 12px; width: 180px;">
+                            <button class="rate-btn" onclick="window.updateProfileName()" style="padding: 3px 8px;">Save Name</button>
+                        </div>
+                        <label class="avatar-upload-label" style="width: max-content;">
+                            Change Custom Avatar
+                            <input type="file" accept="image/*" style="display:none;" onchange="window.handleAvatarUpload(event)">
+                        </label>
+                    </div>
                 </div>
             </div>
             <div class="main-block">
-                <h2>Your Videos</h2>
+                <h2>Your Uploads</h2>
                 <div class="video-grid-old" id="user-uploaded-grid"></div>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="loginModal">
-        <div class="google-box">
-            <h3>Sign In to YouTube Classic</h3>
-            <input type="text" id="googleUsername" class="google-input" placeholder="Enter nickname">
-            <button class="google-btn" onclick="window.confirmSignIn()">Sign In</button>
-        </div>
+    <div id="footer">
+        <p>© 2005-2010 BTube LLC • Karaganda Vibe Beta Edition</p>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getDatabase, ref, push, set, onValue, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+        import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBR53qYSskzOW2HDPXTK9xbni8GoBJPjRk",
@@ -291,34 +295,81 @@
 
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
-        const videosRef = ref(database, 'yt_classic_videos');
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+        const videosRef = ref(database, 'btube_beta_videos');
 
         const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='50' height='50' fill='%23cccccc'/><circle cx='25' cy='20' r='10' fill='%23666666'/><path d='M 5,45 Q 25,25 45,45 Z' fill='%23666666'/></svg>";
 
-        // Локальная сессия для текущего пользователя (чтобы оставаться залогиненным при перезагрузке)
-        window.currentUser = JSON.parse(localStorage.getItem('yt_session')) || { loggedIn: false, name: "Guest", avatar: DEFAULT_AVATAR };
+        // Подгружаем кастомизацию юзера, если она была сохранена локально поверх Google-аккаунта
+        window.currentUser = JSON.parse(localStorage.getItem('btube_user_custom')) || { loggedIn: false, name: "Guest", avatar: DEFAULT_AVATAR };
         window.globalVideos = [];
         window.currentVideoId = null;
 
-        function saveSession() {
-            localStorage.setItem('yt_session', JSON.stringify(window.currentUser));
-            renderAuthBar();
-        }
-
-        // Подписываемся на Firebase (все устройства получат обновления моментально)
-        onValue(videosRef, (snapshot) => {
-            const data = snapshot.val();
-            window.globalVideos = [];
-            if (data) {
-                // Превращаем объект в массив и сохраняем оригинальный Firebase ID
-                Object.keys(data).forEach(key => {
-                    window.globalVideos.push({ id: key, ...data[key] });
-                });
-                // Сортируем новые сверху
-                window.globalVideos.sort((a, b) => b.time - a.time);
+        // Следим за авторизацией Google
+        onAuthStateChanged(auth, (user) => {
+            if (user && !JSON.parse(localStorage.getItem('btube_user_custom'))) {
+                window.currentUser = {
+                    loggedIn: true,
+                    name: user.displayName || "Google User",
+                    avatar: user.photoURL || DEFAULT_AVATAR
+                };
+                renderAuthBar();
+                renderViews();
             }
-            renderViews(); // Перерисовываем интерфейс при любых изменениях в базе
         });
+
+        window.handleGoogleSignIn = async function() {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                window.currentUser = {
+                    loggedIn: true,
+                    name: result.user.displayName || "Google User",
+                    avatar: result.user.photoURL || DEFAULT_AVATAR
+                };
+                localStorage.removeItem('btube_user_custom'); // сброс старой кастомной сессии
+                renderAuthBar();
+                renderViews();
+            } catch (error) {
+                alert("Ошибка входа через Google: " + error.message + "\nУбедись, что Google Auth включен в консоли Firebase!");
+            }
+        };
+
+        window.handleLogOut = async function() {
+            await signOut(auth);
+            window.currentUser = { loggedIn: false, name: "Guest", avatar: DEFAULT_AVATAR };
+            localStorage.removeItem('btube_user_custom');
+            renderAuthBar();
+            window.navigateTo('home');
+        };
+
+        // Изменение никнейма
+        window.updateProfileName = function() {
+            const newName = document.getElementById('editProfileName').value.trim();
+            if(!newName) return alert("Введите имя!");
+            window.currentUser.name = newName;
+            window.currentUser.loggedIn = true;
+            localStorage.setItem('btube_user_custom', JSON.stringify(window.currentUser));
+            renderAuthBar();
+            renderViews();
+            alert("Никнейм изменен успешно!");
+        };
+
+        // Изменение аватарки (Base64)
+        window.handleAvatarUpload = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                window.currentUser.avatar = e.target.result;
+                window.currentUser.loggedIn = true;
+                localStorage.setItem('btube_user_custom', JSON.stringify(window.currentUser));
+                document.getElementById('chanAvatar').src = window.currentUser.avatar;
+                renderAuthBar();
+                alert("Аватарка успешно заменена на кастомную!");
+            };
+            reader.readAsDataURL(file);
+        };
 
         function renderAuthBar() {
             const authBar = document.getElementById('authBar');
@@ -334,51 +385,36 @@
             } else {
                 authBar.innerHTML = `
                     <a onclick="window.navigateTo('upload')">Upload</a> | 
-                    <a onclick="document.getElementById('loginModal').classList.add('active')" style="font-weight:bold;">Sign In</a>
+                    <a onclick="window.handleGoogleSignIn()" style="font-weight:bold; color: #4285F4;">Sign In with Google</a>
                 `;
             }
         }
 
-        window.confirmSignIn = function() {
-            const name = document.getElementById('googleUsername').value.trim();
-            if (!name) return;
-            window.currentUser = { loggedIn: true, name: name, avatar: DEFAULT_AVATAR };
-            saveSession();
-            document.getElementById('loginModal').classList.remove('active');
-            window.navigateTo('home');
-        };
+        // Подключаем базу данных в реальном времени
+        onValue(videosRef, (snapshot) => {
+            const data = snapshot.val();
+            window.globalVideos = [];
+            if (data) {
+                Object.keys(data).forEach(key => {
+                    window.globalVideos.push({ id: key, ...data[key] });
+                });
+                window.globalVideos.sort((a, b) => b.time - a.time);
+            }
+            renderViews();
+        });
 
-        window.handleLogOut = function() {
-            window.currentUser = { loggedIn: false, name: "Guest", avatar: DEFAULT_AVATAR };
-            saveSession();
-            window.navigateTo('home');
-        };
-
-        // Загрузка глобальной аватарки (она прикрепится ко всем будущим видео и комментам)
-        window.handleAvatarUpload = function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                window.currentUser.avatar = e.target.result;
-                saveSession();
-                document.getElementById('chanAvatar').src = window.currentUser.avatar;
-                alert("Аватарка обновлена! Теперь она будет видна всем при загрузке новых видео и комментов.");
-            };
-            reader.readAsDataURL(file);
-        };
-
-        // ЗАГРУЗКА ВИДЕО: Файл в tmpfiles.org -> Ссылку и описание в Firebase
+        // Загрузка видео с категорией
         window.handleVideoUpload = async function() {
             const title = document.getElementById('upTitle').value.trim();
+            const category = document.getElementById('upCategory').value;
             const desc = document.getElementById('upDesc').value.trim();
             const tags = document.getElementById('upTags').value.trim();
             const file = document.getElementById('upFile').files[0];
             const statusBox = document.getElementById('uploadStatus');
 
-            if (!title || !file) return alert("Введите название и выберите файл!");
+            if (!title || !file) return alert("Заполните название и выберите файл!");
             
-            statusBox.innerText = "1. Загрузка видеофайла в облако tmpfiles...";
+            statusBox.innerText = "Загрузка файла в tmpfiles облако...";
             const formData = new FormData();
             formData.append("file", file);
 
@@ -388,15 +424,16 @@
                 
                 if (result && result.data && result.data.url) {
                     let downloadUrl = result.data.url.replace("https://tmpfiles.org/", "https://tmpfiles.org/dl/");
-                    statusBox.innerText = "2. Сохранение данных в Firebase для всех устройств...";
+                    statusBox.innerText = "Синхронизация данных с BTube DB...";
 
                     const newVideoObj = {
                         title: title,
+                        category: category,
                         desc: desc || "Без описания",
                         tags: tags || "vibe",
                         fileUrl: downloadUrl,
                         author: window.currentUser.name,
-                        authorAvatar: window.currentUser.avatar, // Сохраняем актуальную аватарку глобально!
+                        authorAvatar: window.currentUser.avatar,
                         views: 0,
                         likes: 0,
                         dislikes: 0,
@@ -405,16 +442,14 @@
                     };
 
                     await push(videosRef, newVideoObj);
-                    
-                    statusBox.innerText = "Успешно! Видео разлетелось по всей базе.";
-                    setTimeout(() => window.navigateTo('home'), 1500);
+                    statusBox.innerText = "Успешно загружено!";
+                    setTimeout(() => window.navigateTo('home'), 1000);
                 }
             } catch (err) {
-                statusBox.innerText = "Ошибка загрузки: " + err.message;
+                statusBox.innerText = "Ошибка: " + err.message;
             }
         };
 
-        // РЕНДЕРИНГ ИНТЕРФЕЙСА
         function createCard(v) {
             return `
                 <div class="video-item-old" onclick="window.openWatch('${v.id}')">
@@ -423,34 +458,32 @@
                     </div>
                     <span class="v-title">${v.title}</span>
                     <div class="v-meta">
-                        by <b>${v.author}</b><br>${v.views || 0} views
+                        by <b>${v.author}</b><br>
+                        <span class="cat-badge">${v.category || 'Игры (Games)'}</span><br>
+                        ${v.views || 0} views
                     </div>
                 </div>
             `;
         }
 
         function renderViews() {
-            // Главная
-            document.getElementById('featured-grid').innerHTML = window.globalVideos.slice(0, 3).map(createCard).join('');
+            document.getElementById('featured-grid').innerHTML = window.globalVideos.slice(0, 6).map(createCard).join('');
             document.getElementById('side-most-viewed').innerHTML = window.globalVideos.map(createCard).join('');
-            
-            // Все видео
             document.getElementById('all-videos-grid').innerHTML = window.globalVideos.map(createCard).join('');
             
-            // Канал
             document.getElementById('chanName').innerText = window.currentUser.name;
             document.getElementById('chanAvatar').src = window.currentUser.avatar;
-            const myVideos = window.globalVideos.filter(v => v.author === window.currentUser.name);
-            document.getElementById('user-uploaded-grid').innerHTML = myVideos.length ? myVideos.map(createCard).join('') : "<p>У вас еще нет видео.</p>";
+            document.getElementById('editProfileName').value = window.currentUser.name === "Guest" ? "" : window.currentUser.name;
 
-            // Обновление открытого видео, если мы на странице watch (чтобы лайки и комменты обновлялись в прямом эфире!)
+            const myVideos = window.globalVideos.filter(v => v.author === window.currentUser.name);
+            document.getElementById('user-uploaded-grid').innerHTML = myVideos.length ? myVideos.map(createCard).join('') : "<p>У вас еще нет загрузок.</p>";
+
             if (window.currentVideoId) {
                 const updatedVideo = window.globalVideos.find(v => v.id === window.currentVideoId);
                 if (updatedVideo) renderWatchMeta(updatedVideo);
             }
         }
 
-        // НАВИГАЦИЯ
         window.navigateTo = function(id) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-tabs li').forEach(el => el.classList.remove('active'));
@@ -464,38 +497,32 @@
             renderViews();
         };
 
-        // ОТКРЫТИЕ ВИДЕО
         window.openWatch = async function(id) {
             window.currentVideoId = id;
             const video = window.globalVideos.find(v => v.id === id);
             if(!video) return;
 
             window.navigateTo('watch');
-            
             const vEl = document.getElementById('mainVideo');
             vEl.src = video.fileUrl;
             vEl.load();
 
-            // Накручиваем просмотр глобально в Firebase
-            await set(ref(database, 'yt_classic_videos/' + id + '/views'), (video.views || 0) + 1);
+            await set(ref(database, 'btube_beta_videos/' + id + '/views'), (video.views || 0) + 1);
         };
 
         function renderWatchMeta(video) {
-            document.getElementById('watchTitle').innerText = video.title;
+            document.getElementById('watchTitle').innerText = `[${video.category || 'Игры (Games)'}] ${video.title}`;
             document.getElementById('watchViews').innerText = `${video.views} views`;
             document.getElementById('watchTags').innerText = `Tags: ${video.tags}`;
             document.getElementById('watchDesc').innerText = video.desc;
             document.getElementById('watchAuthorName').innerText = video.author;
-            // Аватарка берется из базы (та, которая была у автора при загрузке)
             document.getElementById('watchAvatar').src = video.authorAvatar || DEFAULT_AVATAR;
             
-            // Лайки
             document.getElementById('likeCount').innerText = video.likes || 0;
             document.getElementById('dislikeCount').innerText = video.dislikes || 0;
             const total = (video.likes || 0) + (video.dislikes || 0);
             document.getElementById('ratingBarLikes').style.width = total === 0 ? "50%" : ((video.likes / total) * 100) + "%";
 
-            // Комменты
             const commentsHtml = video.comments ? Object.values(video.comments).map(c => `
                 <div class="comment-item">
                     <img src="${c.avatar || DEFAULT_AVATAR}" class="comment-avatar">
@@ -504,9 +531,8 @@
             `).join('') : "<p style='color:#666;'>No comments yet.</p>";
             document.getElementById('commentsListContainer').innerHTML = commentsHtml;
 
-            // Похожие видео
             document.getElementById('suggestionsContainer').innerHTML = window.globalVideos
-                .filter(v => v.id !== video.id).slice(0, 4)
+                .filter(v => v.id !== video.id).slice(0, 5)
                 .map(v => `
                     <div class="side-video-item" onclick="window.openWatch('${v.id}')">
                         <div class="side-thumb"><video src="${v.fileUrl}" muted></video></div>
@@ -515,64 +541,48 @@
                 `).join('');
         }
 
-        // ЛАЙКИ, ДИЗЛАЙКИ, КОММЕНТЫ (Отправка в Firebase)
+        // БЕСКОНЕЧНЫЙ ФАРМ ЛАЙКОВ (Просто плюсует без проверок)
         window.rateVideo = async function(isLike) {
             const video = window.globalVideos.find(v => v.id === window.currentVideoId);
             if(!video) return;
             const target = isLike ? 'likes' : 'dislikes';
-            await set(ref(database, `yt_classic_videos/${video.id}/${target}`), (video[target] || 0) + 1);
+            await set(ref(database, `btube_beta_videos/${video.id}/${target}`), (video[target] || 0) + 1);
         };
 
         window.addComment = async function() {
             const text = document.getElementById('commentInput').value.trim();
             if(!text || !window.currentVideoId) return;
-            if(!window.currentUser.loggedIn) return alert("Сначала войдите в аккаунт!");
 
             const newComment = {
                 user: window.currentUser.name,
-                avatar: window.currentUser.avatar, // Отправляем глобальную аватарку юзера
+                avatar: window.currentUser.avatar,
                 text: text,
                 time: Date.now()
             };
             
-            await push(ref(database, `yt_classic_videos/${window.currentVideoId}/comments`), newComment);
+            await push(ref(database, `btube_beta_videos/${window.currentVideoId}/comments`), newComment);
             document.getElementById('commentInput').value = "";
         };
 
-        // ПЛЕЕР
+        // СТАНДАРТНЫЙ ПЛЕЕР УТИЛИТЫ
         const vEl = document.getElementById('mainVideo');
-        const pLine = document.getElementById('progressLine');
-        const pHandle = document.getElementById('progressHandle');
-        
         document.getElementById('playBtn').onclick = () => {
             vEl.paused ? vEl.play() : vEl.pause();
             document.getElementById('playBtn').innerText = vEl.paused ? "►" : "║║";
         };
-        
         vEl.ontimeupdate = () => {
             if(!vEl.duration) return;
             const pct = (vEl.currentTime / vEl.duration) * 100;
-            pLine.style.width = pct + "%";
-            pHandle.style.left = pct + "%";
-            
-            const format = s => {
-                if(isNaN(s)) return "0:00";
-                const m = Math.floor(s/60);
-                const secs = Math.floor(s%60);
-                return `${m}:${secs<10?'0':''}${secs}`;
-            };
-            document.getElementById('timeDisplay').innerText = `${format(vEl.currentTime)} / ${format(vEl.duration)}`;
+            document.getElementById('progressLine').style.width = pct + "%";
+            document.getElementById('progressHandle').style.left = pct + "%";
+            const f = s => isNaN(s) ? "0:00" : `${Math.floor(s/60)}:${Math.floor(s%60)<10?'0':''}${Math.floor(s%60)}`;
+            document.getElementById('timeDisplay').innerText = `${f(vEl.currentTime)} / ${f(vEl.duration)}`;
         };
-
         document.getElementById('progressContainer').onclick = (e) => {
             const rect = e.target.getBoundingClientRect();
             vEl.currentTime = ((e.clientX - rect.left) / rect.width) * vEl.duration;
         };
-
-        document.getElementById('volumeSlider').oninput = (e) => {
-            vEl.volume = e.target.value;
-            document.getElementById('volumeBtn').innerText = vEl.volume === 0 ? "🔇" : "🔊";
-        };
+        document.getElementById('volumeSlider').oninput = (e) => { vEl.volume = e.target.value; };
 
         renderAuthBar();
     </script>
