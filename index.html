@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Общий Видеохостинг</title>
+    <title>Мой Firebase Видеохостинг</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #121212; color: #fff; max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; }
         .upload-area { background: #1e1e1e; border: 2px dashed #333; padding: 30px; border-radius: 15px; margin-bottom: 30px; }
-        .btn-select { background: #e91e63; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-select { background: #ffca28; color: #000; padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-upload { background: #00e676; color: #000; padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; display: none; }
         input[type="file"] { display: none; }
-        #status { margin-top: 15px; color: #00e5ff; font-weight: bold; word-break: break-all; }
+        #status { margin-top: 15px; color: #00e5ff; font-weight: bold; }
         .video-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
         .video-card { background: #1a1a1a; padding: 12px; border-radius: 10px; border: 1px solid #222; text-align: left; }
         video { width: 100%; border-radius: 6px; background: #000; margin-top: 8px; }
@@ -18,116 +18,89 @@
 </head>
 <body>
 
-    <h1>🌐 Общая Видеоплатформа</h1>
-    <p>Стабильная синхронизация между всеми устройствами</p>
+    <h1>🎬 Настоящий Firebase Видеохостинг</h1>
+    <p>Все устройства увидят загруженное видео мгновенно и в реальном времени!</p>
 
     <div class="upload-area">
         <button class="btn-select" onclick="document.getElementById('fileInput').click()">1. Выбрать видео</button>
         <input type="file" id="fileInput" accept="video/*" onchange="fileSelected()">
         <p id="fileName"></p>
         
-        <button id="uploadBtn" class="btn-upload" onclick="startUpload()">2. Загрузить для всех</button>
+        <button id="uploadBtn" class="btn-upload" onclick="startUpload()">2. Опубликовать для всех</button>
         <div id="status"></div>
     </div>
 
     <h2>Лента видео</h2>
-    <div class="video-gallery" id="gallery">Загрузка ленты...</div>
+    <div class="video-gallery" id="gallery">Подключение к Firebase...</div>
 
-    <script>
-        // Используем полностью открытый и бесплатный ключ-значение сервис для хранения списка ссылок
-        // Мы создаем уникальный ящик на базе бесплатного API countapi/jsonbin аналога
-        const BOX_ID = "atary_vibe_video_box_v1"; 
-        const DB_URL = `https://api.jsonbin.io/v3/b/661ff979ad19ca34f85a975d`; // Публичный тестовый контейнер
-        
-        // Временный встроенный резервный шлюз списка, если глобальный сервер занят
-        let backupList = [];
+    <!-- Подключаем Firebase через CDN (версия 9+ совместимая с синтаксисом window) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+        import { getDatabase, ref as dRef, push, set, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-        function fileSelected() {
+        // Твой личный конфиг Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBR53qYSskzOW2HDPXTK9xbni8GoBJPjRk",
+            authDomain: "github-63086.firebaseapp.com",
+            databaseURL: "https://github-63086-default-rtdb.firebaseio.com",
+            projectId: "github-63086",
+            storageBucket: "github-63086.firebasestorage.app",
+            messagingSenderId: "1033255822251",
+            appId: "1:1033255822251:web:4acc0672060eb8993528ee",
+            measurementId: "G-49VQPY3588"
+        };
+
+        // Инициализируем сервисы
+        const app = initializeApp(firebaseConfig);
+        const storage = getStorage(app);
+        const database = getDatabase(app);
+
+        // Сделаем функции доступными для кнопок HTML
+        window.fileSelected = function() {
             const file = document.getElementById('fileInput').files[0];
             if (file) {
-                document.getElementById('fileName').innerText = "Файл готов: " + file.name;
+                document.getElementById('fileName').innerText = "Выбран: " + file.name;
                 document.getElementById('uploadBtn').style.display = 'inline-block';
             }
         }
 
-        async function startUpload() {
+        window.startUpload = async function() {
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
             const status = document.getElementById('status');
 
             if (!file) return;
-            status.innerText = "1. Загрузка видеофайла в облако...";
+            status.innerText = "Отправка файла в Firebase Storage...";
 
-            const formData = new FormData();
-            formData.append("file", file);
+            // Создаем уникальное имя в хранилище, чтобы файлы не заменяли друг друга
+            const fileRef = sRef(storage, 'videos/' + Date.now() + '_' + file.name);
 
             try {
-                // Отправляем файл на стабильный tmpfiles
-                const response = await fetch('https://tmpfiles.org/api/v1/upload', {
-                    method: 'POST',
-                    body: formData
+                // 1. Загружаем файл в Хранилище Firebase
+                const snapshot = await uploadBytes(fileRef, file);
+                status.innerText = "Получение ссылки на видео...";
+                
+                // 2. Получаем прямую скачиваемую ссылку
+                const downloadUrl = await getDownloadURL(snapshot.ref);
+                status.innerText = "Запись в базу данных...";
+
+                // 3. Сохраняем информацию в Firebase Realtime Database
+                const dbRef = dRef(database, 'videos');
+                const newVideoRef = push(dbRef);
+                await set(newVideoRef, {
+                    name: file.name,
+                    url: downloadUrl,
+                    time: Date.now()
                 });
 
-                if (!response.ok) throw new Error("Ошибка хостинга файлов");
-                const result = await response.json();
-                
-                if (result && result.data && result.data.url) {
-                    let rawUrl = result.data.url;
-                    let downloadUrl = rawUrl.replace("https://tmpfiles.org/", "https://tmpfiles.org/dl/");
+                status.innerText = "🎉 Успешно! Видео доступно всем устройствам.";
+                resetForm();
 
-                    status.innerText = "2. Публикация ссылки в общую ленту...";
-
-                    // Сохраняем ссылку в кэш и отправляем запрос на обновление центральной базы
-                    await saveToGlobalDB(downloadUrl, file.name);
-
-                    status.innerText = "🎉 Видео успешно добавлено и доступно всем устройствам!";
-                    resetForm();
-                    loadVideos(); // Перезагружаем ленту
-                }
-            } catch (err) {
-                status.innerText = "❌ Ошибка: " + err.message;
+            } catch (error) {
+                console.error(error);
+                status.innerText = "❌ Ошибка: " + error.message + ". Проверь правила (Rules) в Firebase!";
             }
-        }
-
-        // Альтернативный ультра-надежный метод обмена ссылками через бесплатный синхронизатор
-        async function saveToGlobalDB(url, name) {
-            try {
-                // Чтобы не мучаться с ключами jsonbin, используем бесплатный стек kv-хранилища
-                let currentVideos = JSON.parse(localStorage.getItem('global_backup_list')) || [];
-                currentVideos.push({ url: url, name: name, time: Date.now() });
-                localStorage.setItem('global_backup_list', JSON.stringify(currentVideos));
-                
-                // Шлем сигнал на сервер-посредник (в данном сценарии для мгновенного теста используем fetch-кэш)
-                await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
-            } catch(e) {}
-        }
-
-        async function loadVideos() {
-            const gallery = document.getElementById('gallery');
-            
-            // Берем локально сохраненные + генерируем общую ленту
-            let localData = JSON.parse(localStorage.getItem('global_backup_list')) || [];
-            
-            // Если пусто, покажем базовый пример
-            if(localData.length === 0) {
-                // Добавим дефолтный тестовый массив, чтобы сайт не был пустым на других устройствах
-                localData = [
-                    { name: "Тестовое видео (Пример)", url: "https://www.w3schools.com/html/mov_bbb.mp4", time: 1 }
-                ];
-            }
-
-            gallery.innerHTML = '';
-            localData.sort((a,b) => b.time - a.time);
-
-            localData.forEach(video => {
-                const card = document.createElement('div');
-                card.className = 'video-card';
-                card.innerHTML = `
-                    <strong>📛 ${video.name}</strong>
-                    <video controls src="${video.url}" preload="metadata"></video>
-                `;
-                gallery.appendChild(card);
-            });
         }
 
         function resetForm() {
@@ -136,10 +109,31 @@
             document.getElementById('uploadBtn').style.display = 'none';
         }
 
-        // Запуск при старте страницы
-        loadVideos();
-        // Каждые 10 секунд проверяем новые видео
-        setInterval(loadVideos, 10000);
+        // 4. Слушаем базу данных в реальном времени (синхронизация на лету!)
+        const dbRef = dRef(database, 'videos');
+        onValue(dbRef, (snapshot) => {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
+
+            const data = snapshot.val();
+            if (!data) {
+                gallery.innerHTML = '<p style="color: #666;">Лента пуста. Загрузи первое видео!</p>';
+                return;
+            }
+
+            // Переводим объект в массив и сортируем: новые сверху
+            const videoList = Object.values(data).sort((a, b) => b.time - a.time);
+
+            videoList.forEach(video => {
+                const card = document.createElement('div');
+                card.className = 'video-card';
+                card.innerHTML = `
+                    <strong>📛 ${video.name}</strong>
+                    <video controls src="${video.url}" preload="metadata"></video>
+                `;
+                gallery.appendChild(card);
+            });
+        });
     </script>
 </body>
 </html>
