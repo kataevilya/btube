@@ -147,8 +147,8 @@
                 </div>
                 <div class="right-col">
                     <div class="side-box">
-                        <h3>🌐 Облачный Профиль</h3>
-                        <p>Ваш никнейм и аватар теперь привязаны к уникальному ID системы. Никаких путаниц с чужими видео при смене ника!</p>
+                        <h3>🌐 Динамический Профиль</h3>
+                        <p>Ваша аватарка и ник привязаны к облачному UID. Они мгновенно обновляются на всех ранее загруженных видео, а удалять ролики может только их автор!</p>
                     </div>
                     <div class="main-block">
                         <h2>Recent Uploads (Последние загрузки)</h2>
@@ -283,7 +283,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getDatabase, ref, push, set, onValue, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+        import { getDatabase, ref, push, set, onValue, get, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -307,6 +307,7 @@
 
         window.currentUser = { loggedIn: false, name: "Guest", avatar: DEFAULT_AVATAR, uid: null };
         window.globalVideos = [];
+        window.allUsersData = {}; // Локальный кэш всех юзеров для динамических аватарок
         window.currentVideoId = null;
         let searchQueryStr = "";
 
@@ -332,6 +333,12 @@
                 window.currentUser = { loggedIn: false, name: "Guest", avatar: DEFAULT_AVATAR, uid: null };
             }
             renderAuthBar();
+            renderViews();
+        });
+
+        // Подписываемся на базу пользователей, чтобы аватарки обновлялись на всех видео налету!
+        onValue(ref(database, 'btube_users'), (snapshot) => {
+            window.allUsersData = snapshot.val() || {};
             renderViews();
         });
 
@@ -380,7 +387,6 @@
             }
         }
 
-        // Поиск по ключевым словам
         window.handleSearch = function() {
             const q = document.getElementById('searchQuery').value.trim().toLowerCase();
             searchQueryStr = q;
@@ -399,6 +405,18 @@
             }
             renderViews();
         });
+
+        // Функция удаления видео (Доступно только автору роликов)
+        window.deleteVideo = async function(id) {
+            if (!confirm("Вы действительно хотите удалить это видео?")) return;
+            try {
+                await remove(ref(database, 'btube_beta_videos/' + id));
+                alert("Видео успешно удалено!");
+                window.navigateTo('home');
+            } catch (err) {
+                alert("Ошибка удаления: " + err.message);
+            }
+        };
 
         window.handleVideoUpload = async function() {
             const title = document.getElementById('upTitle').value.trim();
@@ -430,7 +448,7 @@
                         tags: tags || "vibe",
                         fileUrl: downloadUrl,
                         author: window.currentUser.name,
-                        authorUid: window.currentUser.uid, // Закрепляем железобетонно за UID!
+                        authorUid: window.currentUser.uid, 
                         authorAvatar: window.currentUser.avatar,
                         views: 0,
                         likes: 0,
@@ -446,11 +464,29 @@
         };
 
         function createCard(v) {
+            // Динамически подтягиваем актуальные имя и аватарку из кэша профилей `allUsersData` по UID автора
+            const authorData = window.allUsersData[v.authorUid] || {};
+            const currentAvatar = authorData.avatar || v.authorAvatar || DEFAULT_AVATAR;
+            const currentName = authorData.name || v.author || "User";
+
+            // Кнопка удаления рендерится только в том случае, если текущий залогиненный UID совпадает с UID автора видео
+            const deleteBtnHtml = (window.currentUser.loggedIn && window.currentUser.uid === v.authorUid)
+                ? `<button onclick="event.stopPropagation(); window.deleteVideo('${v.id}')" style="margin-top:5px; color:red; font-weight:bold; background:#fff; border:1px solid red; padding:1px 4px; border-radius:2px; cursor:pointer;">Удалить видео</button>`
+                : '';
+
             return `
                 <div class="video-item-old" onclick="window.openWatch('${v.id}')">
                     <div class="thumb-container"><video src="${v.fileUrl}" preload="metadata" muted></video></div>
                     <span class="v-title">${v.title}</span>
-                    <div class="v-meta">by <b>${v.author}</b><br><span class="cat-badge">${v.category || 'Игры'}</span><br>${v.views || 0} views</div>
+                    <div class="v-meta" style="display:flex; align-items:center; gap:5px; margin-top:3px;">
+                        <img src="${currentAvatar}" style="width:16px; height:16px; object-fit:cover; border-radius:2px; border:1px solid #ccc;">
+                        <span>by <b>${currentName}</b></span>
+                    </div>
+                    <div class="v-meta">
+                        <span class="cat-badge" style="margin: 3px 0;">${v.category || 'Игры'}</span><br>
+                        ${v.views || 0} views
+                        ${deleteBtnHtml}
+                    </div>
                 </div>
             `;
         }
@@ -458,7 +494,6 @@
         function renderViews() {
             if(!document.getElementById('featured-grid')) return;
             
-            // Фильтрация для страницы всех видео с учетом поиска
             let filtered = window.globalVideos;
             if(searchQueryStr) {
                 filtered = window.globalVideos.filter(v => 
@@ -469,15 +504,12 @@
             }
 
             document.getElementById('featured-grid').innerHTML = window.globalVideos.slice(0, 6).map(createCard).join('');
-            
-            // Ограничение: Показываем только последние 5 загрузок в сайдбаре "All Uploads"
             document.getElementById('side-most-viewed').innerHTML = window.globalVideos.slice(0, 5).map(createCard).join('');
             document.getElementById('all-videos-grid').innerHTML = filtered.map(createCard).join('');
             
             document.getElementById('chanName').innerText = window.currentUser.name;
             document.getElementById('chanAvatar').src = window.currentUser.avatar;
 
-            // Фильтрация по UID, чтобы чужие видео не прилипали при смене ника!
             const myVideos = window.globalVideos.filter(v => v.authorUid === window.currentUser.uid);
             document.getElementById('user-uploaded-grid').innerHTML = myVideos.length ? myVideos.map(createCard).join('') : "<p>У вас еще нет загрузок.</p>";
 
@@ -497,7 +529,7 @@
             if(id === 'channel') document.getElementById('tab-channel').classList.add('active');
 
             if(id !== 'watch') document.getElementById('mainVideo').pause();
-            if(id !== 'videos-list') searchQueryStr = ""; // Сброс поиска
+            if(id !== 'videos-list') searchQueryStr = ""; 
             renderViews();
         };
 
@@ -515,19 +547,22 @@
         };
 
         function renderWatchMeta(video) {
+            const authorData = window.allUsersData[video.authorUid] || {};
+            const currentAvatar = authorData.avatar || video.authorAvatar || DEFAULT_AVATAR;
+            const currentName = authorData.name || video.author || "User";
+
             document.getElementById('watchTitle').innerText = `[${video.category || 'Игры'}] ${video.title}`;
             document.getElementById('watchViews').innerText = `${video.views} views`;
             document.getElementById('watchTags').innerText = `Tags: ${video.tags}`;
             document.getElementById('watchDesc').innerText = video.desc;
-            document.getElementById('watchAuthorName').innerText = video.author;
-            document.getElementById('watchAvatar').src = video.authorAvatar || DEFAULT_AVATAR;
+            document.getElementById('watchAuthorName').innerText = currentName;
+            document.getElementById('watchAvatar').src = currentAvatar;
             
             document.getElementById('likeCount').innerText = video.likes || 0;
             document.getElementById('dislikeCount').innerText = video.dislikes || 0;
             const total = (video.likes || 0) + (video.dislikes || 0);
             document.getElementById('ratingBarLikes').style.width = total === 0 ? "50%" : ((video.likes / total) * 100) + "%";
 
-            // Подсвечиваем кнопки, если оценка уже стоит
             const lockKey = `btube_vote_${window.currentUser.uid}_${video.id}`;
             const currentVote = localStorage.getItem(lockKey);
             document.getElementById('likeBtn').classList.toggle('active', currentVote === 'like');
@@ -541,18 +576,18 @@
             `).join('') : "<p style='color:#666;'>No comments yet.</p>";
             document.getElementById('commentsListContainer').innerHTML = commentsHtml;
 
-            // 🎭 СИСТЕМА РЕКОМЕНДАЦИЙ (Поиск совпадений по тегам или категории)
+            // РЕКОМЕНДАЦИИ
             const currentTags = video.tags.toLowerCase().split(',').map(t => t.trim());
             const recommendations = window.globalVideos
-                .filter(v => v.id !== video.id) // Исключаем текущее видео
+                .filter(v => v.id !== video.id) 
                 .map(v => {
                     let score = 0;
-                    if (v.category === video.category) score += 2; // Бонус за ту же категорию
+                    if (v.category === video.category) score += 2; 
                     const vTags = v.tags.toLowerCase().split(',').map(t => t.trim());
-                    currentTags.forEach(t => { if(vTags.includes(t)) score += 3; }); // Супер-бонус за общий тег
+                    currentTags.forEach(t => { if(vTags.includes(t)) score += 3; }); 
                     return { video: v, score: score };
                 })
-                .sort((a, b) => b.score - a.score || b.video.views - a.video.views) // Сортируем по релевантности, затем по просмотрам
+                .sort((a, b) => b.score - a.score || b.video.views - a.video.views) 
                 .slice(0, 6);
 
             document.getElementById('suggestionsContainer').innerHTML = recommendations.map(r => `
@@ -563,7 +598,6 @@
             `).join('');
         }
 
-        // 🔄 Умные Лайки/Дизлайки с возможностью ОТМЕНЫ БЕЗ АЛЕРТОВ
         window.rateVideo = async function(wantLike) {
             if (!window.currentUser.loggedIn) return alert("Войдите в систему через Google!");
             
@@ -571,36 +605,30 @@
             if(!video) return;
 
             const lockKey = `btube_vote_${window.currentUser.uid}_${video.id}`;
-            const previousVote = localStorage.getItem(lockKey); // Может быть null, 'like' или 'dislike'
+            const previousVote = localStorage.getItem(lockKey); 
 
             let newLikes = video.likes || 0;
             let newDislikes = video.dislikes || 0;
 
             if (previousVote === null) {
-                // Первый голос
                 if (wantLike) newLikes++; else newDislikes++;
                 localStorage.setItem(lockKey, wantLike ? 'like' : 'dislike');
             } else if (previousVote === 'like' && wantLike) {
-                // Нажал лайк повторно -> Убираем лайк
                 newLikes = Math.max(0, newLikes - 1);
                 localStorage.removeItem(lockKey);
             } else if (previousVote === 'dislike' && !wantLike) {
-                // Нажал дизлайк повторно -> Убираем дизлайк
                 newDislikes = Math.max(0, newDislikes - 1);
                 localStorage.removeItem(lockKey);
             } else if (previousVote === 'like' && !wantLike) {
-                // Стоял лайк, а нажал дизлайк -> Меняем сторону
                 newLikes = Math.max(0, newLikes - 1);
                 newDislikes++;
                 localStorage.setItem(lockKey, 'dislike');
             } else if (previousVote === 'dislike' && wantLike) {
-                // Стоял дизлайк, а нажал лайк -> Меняем сторону
                 newDislikes = Math.max(0, newDislikes - 1);
                 newLikes++;
                 localStorage.setItem(lockKey, 'like');
             }
 
-            // Пишем изменения в Firebase
             await set(ref(database, `btube_beta_videos/${video.id}/likes`), newLikes);
             await set(ref(database, `btube_beta_videos/${video.id}/dislikes`), newDislikes);
         };
@@ -614,7 +642,7 @@
             document.getElementById('commentInput').value = "";
         };
 
-        // КЛАССИЧЕСКИЙ ПЛЕЕР
+        // ПЛЕЕР
         const vEl = document.getElementById('mainVideo');
         document.getElementById('playBtn').onclick = () => {
             vEl.paused ? vEl.play() : vEl.pause();
