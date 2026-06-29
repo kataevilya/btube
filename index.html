@@ -10,7 +10,7 @@
         .btn-select { background: #e91e63; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-upload { background: #00e676; color: #000; padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; display: none; }
         input[type="file"] { display: none; }
-        #status { margin-top: 15px; color: #00e5ff; font-weight: bold; }
+        #status { margin-top: 15px; color: #00e5ff; font-weight: bold; word-break: break-all; }
         .video-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
         .video-card { background: #1a1a1a; padding: 12px; border-radius: 10px; border: 1px solid #222; text-align: left; }
         video { width: 100%; border-radius: 6px; background: #000; margin-top: 8px; }
@@ -20,7 +20,7 @@
 <body>
 
     <h1>🌐 Общая Видеоплатформа</h1>
-    <p>Все загруженные файлы сразу появляются на всех устройствах в реальном времени!</p>
+    <p>Все загруженные файлы сразу появляются на всех устройствах!</p>
 
     <div class="upload-area">
         <button class="btn-select" onclick="document.getElementById('fileInput').click()">1. Выбрать видео</button>
@@ -37,11 +37,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
     <script>
-        // Инициализируем общую базу данных (используем публичные сервера)
+        // Инициализируем общую базу данных
         const gun = Gun(['https://gun-manhattan.herokuapp.com/gun']);
-        const videoNode = gun.get('my_global_free_videos_list_v1');
+        const videoNode = gun.get('my_global_free_videos_list_v2'); // поменяли имя узла, чтобы очистить кэш
 
-        // Отслеживание выбора файла
         function fileSelected() {
             const file = document.getElementById('fileInput').files[0];
             if (file) {
@@ -50,72 +49,74 @@
             }
         }
 
-        // Загрузка видео в интернет
-        function startUpload() {
+        async function startUpload() {
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
             const status = document.getElementById('status');
             const progressBar = document.getElementById('progressBar');
 
             if (!file) return;
-            status.innerText = "Отправка видео в сеть...";
+            status.innerText = "Подготовка к загрузке...";
+            progressBar.style.width = "0%";
 
             const formData = new FormData();
-            formData.append("reqtype", "fileupload");
-            formData.append("fileToUpload", file);
+            formData.append("file", file);
 
-            const xhr = new XMLHttpRequest();
-            // Используем corsproxy для обхода защиты
-            xhr.open("POST", "https://corsproxy.io/?https://catbox.moe/user/api.php", true);
+            // Используем альтернативный, более стабильный анонимный хостинг файлов tmpfiles.org
+            // Он отлично работает с CORS и не требует сторонних прокси-серверов
+            try {
+                const response = await fetch('https://tmpfiles.org/api/v1/upload', {
+                    method: 'POST',
+                    body: formData
+                });
 
-            xhr.upload.onprogress = function(e) {
-                if (e.lengthComputable) {
-                    const percent = (e.loaded / e.total) * 100;
-                    progressBar.style.width = percent + "%";
-                    status.innerText = `Загрузка в облако: ${Math.round(percent)}%`;
+                if (!response.ok) {
+                    throw new Error(`Ошибка сервера: ${response.status}`);
                 }
-            };
 
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    const videoUrl = xhr.responseText.trim();
-                    if(videoUrl.startsWith("https")) {
-                        status.innerText = "⚡ Видео сохраняется в глобальную базу...";
-                        
-                        // Сохраняем ссылку и имя в ОБЩУЮ базу данных GunDB
-                        const videoId = 'vid_' + Date.now();
-                        videoNode.get(videoId).put({
-                            url: videoUrl,
-                            name: file.name,
-                            time: Date.now()
-                        });
+                const result = await response.json();
+                
+                // tmpfiles возвращает ссылку на страницу, нам нужно переделать её в прямую ссылку на файл
+                if (result && result.data && result.data.url) {
+                    let rawUrl = result.data.url;
+                    // Превращаем https://tmpfiles.org/XXXXX/name.mp4 в https://tmpfiles.org/dl/XXXXX/name.mp4
+                    let downloadUrl = rawUrl.replace("https://tmpfiles.org/", "https://tmpfiles.org/dl/");
 
-                        status.innerText = "🎉 Успешно! Видео доступно всем устройствам.";
-                        resetForm();
-                    } else {
-                        status.innerText = "Ошибка сервера хранилища.";
-                    }
+                    status.innerText = "⚡ Сохранение в глобальную базу данных...";
+
+                    // Записываем прямую ссылку в GunDB
+                    const videoId = 'vid_' + Date.now();
+                    videoNode.get(videoId).put({
+                        url: downloadUrl,
+                        name: file.name,
+                        time: Date.now()
+                    });
+
+                    status.innerText = "🎉 Успешно загружено и доступно всем!";
+                    progressBar.style.width = "100%";
+                    resetForm();
                 } else {
-                    status.innerText = "Ошибка сети при загрузке.";
+                    status.innerText = "Не удалось получить ссылку от сервера.";
                 }
-            };
-            xhr.send(formData);
+
+            } catch (err) {
+                console.error(err);
+                status.innerText = "❌ Ошибка при загрузке: " + err.message + ". Попробуйте еще раз.";
+            }
         }
 
         function resetForm() {
             document.getElementById('fileInput').value = "";
             document.getElementById('fileName').innerText = "";
             document.getElementById('uploadBtn').style.display = 'none';
-            document.getElementById('progressBar').style.width = '0%';
         }
 
-        // Сюда будем собирать видео из сети
         let globalVideos = {};
 
-        // Слушаем изменения в глобальной базе данных
+        // Слушаем изменения в базе данных
         videoNode.map().on(function(data, id) {
             if (data && data.url && data.name) {
-                globalVideos[id] = data; // сохраняем или обновляем видео в списке
+                globalVideos[id] = data;
                 renderGallery();
             }
         });
@@ -131,7 +132,6 @@
                 return;
             }
 
-            // Сортируем, чтобы новые видео были вверху
             items.sort((a, b) => b.time - a.time);
 
             items.forEach(video => {
@@ -145,10 +145,9 @@
             });
         }
         
-        // Если база пуста или долго грузится, через 3 секунды убираем надпись загрузки
         setTimeout(() => {
             if(Object.keys(globalVideos).length === 0) {
-                document.getElementById('gallery').innerHTML = '<p style="color: #666;">Лента пуста или подключается к сети...</p>';
+                document.getElementById('gallery').innerHTML = '<p style="color: #666;">Видео не найдены или база подключается...</p>';
             }
         }, 4000);
     </script>
