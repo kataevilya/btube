@@ -48,7 +48,9 @@
         .video-item-old .v-meta { color: #666666; font-size: 11px; margin-top: 2px; line-height: 1.4; }
         .cat-badge { background: #E0E0E0; color: #333; padding: 1px 4px; border-radius: 2px; font-size: 9px; font-weight: bold; display: inline-block; }
 
-        .side-box { background: #FFFEEA; border: 1px solid #F0E7A4; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
+        /* Новый стиль вместо удаленного фарма лайков */
+        .side-box { background: #F4F8FF; border: 1px solid #D2E1F7; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
+        .side-box h3 { font-size: 13px; margin-bottom: 5px; color: #222; }
 
         /* Watch Page */
         .watch-layout { display: grid; grid-template-columns: 640px 1fr; gap: 20px; }
@@ -71,10 +73,9 @@
         .author-avatar { width: 35px; height: 35px; border: 1px solid #CCC; object-fit: cover; }
         .author-name { font-weight: bold; color: #0033CC; font-size: 13px; }
 
-        /* Бесконечные лайки */
         .rating-box { display: flex; align-items: center; gap: 10px; margin-top: 10px; justify-content: flex-end; }
-        .rate-btn { background: #F2F2F2; border: 1px solid #CCCCCC; padding: 5px 10px; font-size: 12px; font-weight: bold; border-radius: 2px; transition: transform 0.1s; }
-        .rate-btn:active { transform: scale(1.1); background: #E0E0E0; }
+        .rate-btn { background: #F2F2F2; border: 1px solid #CCCCCC; padding: 5px 10px; font-size: 11px; font-weight: bold; border-radius: 2px; }
+        .rate-btn:hover { background: #EAEAEA; }
         .rating-bar-bg { width: 100px; height: 4px; background: #CC0000; position: relative; border-radius: 2px; overflow: hidden; }
         .rating-bar-likes { height: 100%; background: #009900; width: 50%; }
 
@@ -96,7 +97,7 @@
         .side-thumb video { width: 100%; height: 100%; object-fit: cover; }
         .side-title { font-weight: bold; color: #0033CC; display: block; font-size: 11px; }
 
-        /* Формы загрузки и кастомизации */
+        /* Формы */
         .upload-box-old { border: 1px solid #D5D5D5; border-radius: 4px; background: #FAFAFA; max-width: 600px; margin: 30px auto; padding: 20px; }
         .upload-box-old h2 { font-size: 16px; margin-bottom: 15px; border-bottom: 1px solid #CCC; padding-bottom: 5px; }
         .form-group { margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
@@ -113,6 +114,7 @@
 </head>
 <body>
 
+    <!-- ШАПКА -->
     <div id="masthead">
         <div class="top-section">
             <a onclick="window.navigateTo('home')" class="logo">
@@ -132,7 +134,9 @@
         </ul>
     </div>
 
+    <!-- КОНТЕНТ -->
     <div id="container">
+        <!-- ГЛАВНАЯ -->
         <div id="view-home" class="view-section active">
             <div class="home-grid">
                 <div class="left-col">
@@ -142,9 +146,10 @@
                     </div>
                 </div>
                 <div class="right-col">
+                    <!-- Замена блока с картинки image_af6712_2.png -->
                     <div class="side-box">
-                        <h3>🔥 Фарм Лайков!</h3>
-                        <p>Кликай по лайкам сколько хочешь! Ограничений нет, набивай просмотры и рейтинг!</p>
+                        <h3>🌐 Синхронизация аккаунта</h3>
+                        <p>Ваш никнейм, кастомная аватарка и лайки мгновенно синхронизируются между ПК и смартфоном через облачную базу данных Firebase!</p>
                     </div>
                     <div class="main-block">
                         <h2>All Uploads</h2>
@@ -154,6 +159,7 @@
             </div>
         </div>
 
+        <!-- СПИСОК ВИДЕО -->
         <div id="view-videos-list" class="view-section">
             <div class="main-block">
                 <h2>Browse Videos</h2>
@@ -161,6 +167,7 @@
             </div>
         </div>
 
+        <!-- WATCH PAGE -->
         <div id="view-watch" class="view-section">
             <div class="watch-layout">
                 <div class="watch-main">
@@ -194,8 +201,8 @@
                         <div class="video-desc-text" id="watchDesc">Описание</div>
                         
                         <div class="rating-box">
-                            <button class="rate-btn" onclick="window.rateVideo(true)">👍 Нафармить Лайк (<span id="likeCount">0</span>)</button>
-                            <button class="rate-btn" onclick="window.rateVideo(false)">👎 Дизлайк (<span id="dislikeCount">0</span>)</button>
+                            <button class="rate-btn" onclick="window.rateVideo(true)">👍 Like (<span id="likeCount">0</span>)</button>
+                            <button class="rate-btn" onclick="window.rateVideo(false)">👎 Dislike (<span id="dislikeCount">0</span>)</button>
                             <div class="rating-bar-bg"><div class="rating-bar-likes" id="ratingBarLikes"></div></div>
                         </div>
                     </div>
@@ -216,6 +223,7 @@
             </div>
         </div>
 
+        <!-- ЗАГРУЗКА ВИДЕО -->
         <div id="view-upload" class="view-section">
             <div class="upload-box-old">
                 <h2>Upload Video File to BTube</h2>
@@ -249,6 +257,7 @@
             </div>
         </div>
 
+        <!-- ПРОФИЛЬ / КАНАЛ -->
         <div id="view-channel" class="view-section">
             <div class="channel-header">
                 <img src="" class="channel-avatar-big" id="chanAvatar" alt="Avatar">
@@ -277,9 +286,10 @@
         <p>© 2005-2010 BTube LLC • Karaganda Vibe Beta Edition</p>
     </div>
 
+    <!-- FIREBASE СИНХРОНИЗАЦИЯ -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+        import { getDatabase, ref, push, set, onValue, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -301,72 +311,84 @@
 
         const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='50' height='50' fill='%23cccccc'/><circle cx='25' cy='20' r='10' fill='%23666666'/><path d='M 5,45 Q 25,25 45,45 Z' fill='%23666666'/></svg>";
 
-        // Подгружаем кастомизацию юзера, если она была сохранена локально поверх Google-аккаунта
-        window.currentUser = JSON.parse(localStorage.getItem('btube_user_custom')) || { loggedIn: false, name: "Guest", avatar: DEFAULT_AVATAR };
+        // Базовый стейт
+        window.currentUser = { loggedIn: false, name: "Guest", avatar: DEFAULT_AVATAR, uid: null };
         window.globalVideos = [];
         window.currentVideoId = null;
 
-        // Следим за авторизацией Google
-        onAuthStateChanged(auth, (user) => {
-            if (user && !JSON.parse(localStorage.getItem('btube_user_custom'))) {
-                window.currentUser = {
-                    loggedIn: true,
-                    name: user.displayName || "Google User",
-                    avatar: user.photoURL || DEFAULT_AVATAR
-                };
-                renderAuthBar();
-                renderViews();
+        // Отслеживание авторизации и подтягивание профиля из базы Firebase
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                window.currentUser.uid = user.uid;
+                window.currentUser.loggedIn = true;
+                
+                // Проверяем, есть ли сохранённые кастомные данные в БД Firebase
+                const userRef = ref(database, 'btube_users/' + user.uid);
+                const snapshot = await get(userRef);
+                
+                if (snapshot.exists()) {
+                    const dbData = snapshot.val();
+                    window.currentUser.name = dbData.name || user.displayName || "Google User";
+                    window.currentUser.avatar = dbData.avatar || user.photoURL || DEFAULT_AVATAR;
+                } else {
+                    window.currentUser.name = user.displayName || "Google User";
+                    window.currentUser.avatar = user.photoURL || DEFAULT_AVATAR;
+                    // Инициализируем в БД
+                    await set(userRef, { name: window.currentUser.name, avatar: window.currentUser.avatar });
+                }
+            } else {
+                window.currentUser = { loggedIn: false, name: "Guest", avatar: DEFAULT_AVATAR, uid: null };
             }
+            renderAuthBar();
+            renderViews();
         });
 
         window.handleGoogleSignIn = async function() {
             try {
-                const result = await signInWithPopup(auth, provider);
-                window.currentUser = {
-                    loggedIn: true,
-                    name: result.user.displayName || "Google User",
-                    avatar: result.user.photoURL || DEFAULT_AVATAR
-                };
-                localStorage.removeItem('btube_user_custom'); // сброс старой кастомной сессии
-                renderAuthBar();
-                renderViews();
+                await signInWithPopup(auth, provider);
             } catch (error) {
-                alert("Ошибка входа через Google: " + error.message + "\nУбедись, что Google Auth включен в консоли Firebase!");
+                alert("Ошибка входа через Google: " + error.message);
             }
         };
 
         window.handleLogOut = async function() {
             await signOut(auth);
-            window.currentUser = { loggedIn: false, name: "Guest", avatar: DEFAULT_AVATAR };
-            localStorage.removeItem('btube_user_custom');
-            renderAuthBar();
             window.navigateTo('home');
         };
 
-        // Изменение никнейма
-        window.updateProfileName = function() {
+        // Сохранение имени в Firebase для полной синхронизации между устройствами
+        window.updateProfileName = async function() {
             const newName = document.getElementById('editProfileName').value.trim();
             if(!newName) return alert("Введите имя!");
+            if(!window.currentUser.uid) return alert("Войдите в систему для изменения имени!");
+
             window.currentUser.name = newName;
-            window.currentUser.loggedIn = true;
-            localStorage.setItem('btube_user_custom', JSON.stringify(window.currentUser));
+            
+            // Запись в Firebase Realtime Database
+            await set(ref(database, 'btube_users/' + window.currentUser.uid + '/name'), newName);
+            
             renderAuthBar();
             renderViews();
-            alert("Никнейм изменен успешно!");
+            alert("Никнейм синхронизирован и сохранен в облаке!");
         };
 
-        // Изменение аватарки (Base64)
+        // Сохранение аватарки в Firebase (Base64 формат строки для быстрой синхронизации)
         window.handleAvatarUpload = function(event) {
             const file = event.target.files[0];
             if (!file) return;
+            if(!window.currentUser.uid) return alert("Войдите в систему для изменения аватара!");
+
             const reader = new FileReader();
-            reader.onload = function(e) {
-                window.currentUser.avatar = e.target.result;
-                window.currentUser.loggedIn = true;
-                localStorage.setItem('btube_user_custom', JSON.stringify(window.currentUser));
-                document.getElementById('chanAvatar').src = window.currentUser.avatar;
+            reader.onload = async function(e) {
+                const base64Avatar = e.target.result;
+                window.currentUser.avatar = base64Avatar;
+                
+                // Запись в Firebase Realtime Database
+                await set(ref(database, 'btube_users/' + window.currentUser.uid + '/avatar'), base64Avatar);
+                
+                document.getElementById('chanAvatar').src = base64Avatar;
                 renderAuthBar();
-                alert("Аватарка успешно заменена на кастомную!");
+                alert("Аватарка синхронизирована и сохранена в облаке!");
             };
             reader.readAsDataURL(file);
         };
@@ -390,7 +412,6 @@
             }
         }
 
-        // Подключаем базу данных в реальном времени
         onValue(videosRef, (snapshot) => {
             const data = snapshot.val();
             window.globalVideos = [];
@@ -403,7 +424,6 @@
             renderViews();
         });
 
-        // Загрузка видео с категорией
         window.handleVideoUpload = async function() {
             const title = document.getElementById('upTitle').value.trim();
             const category = document.getElementById('upCategory').value;
@@ -412,9 +432,10 @@
             const file = document.getElementById('upFile').files[0];
             const statusBox = document.getElementById('uploadStatus');
 
-            if (!title || !file) return alert("Заполните название и выберите файл!");
+            if (!title || !file) return alert("Заполните поля!");
+            if (!window.currentUser.loggedIn) return alert("Войдите, чтобы загрузить видео!");
             
-            statusBox.innerText = "Загрузка файла в tmpfiles облако...";
+            statusBox.innerText = "Загрузка файла в облако tmpfiles...";
             const formData = new FormData();
             formData.append("file", file);
 
@@ -424,7 +445,7 @@
                 
                 if (result && result.data && result.data.url) {
                     let downloadUrl = result.data.url.replace("https://tmpfiles.org/", "https://tmpfiles.org/dl/");
-                    statusBox.innerText = "Синхронизация данных с BTube DB...";
+                    statusBox.innerText = "Сохранение в BTube DB...";
 
                     const newVideoObj = {
                         title: title,
@@ -467,6 +488,7 @@
         }
 
         function renderViews() {
+            if(!document.getElementById('featured-grid')) return;
             document.getElementById('featured-grid').innerHTML = window.globalVideos.slice(0, 6).map(createCard).join('');
             document.getElementById('side-most-viewed').innerHTML = window.globalVideos.map(createCard).join('');
             document.getElementById('all-videos-grid').innerHTML = window.globalVideos.map(createCard).join('');
@@ -541,12 +563,26 @@
                 `).join('');
         }
 
-        // БЕСКОНЕЧНЫЙ ФАРМ ЛАЙКОВ (Просто плюсует без проверок)
+        // Честные лайки без накрутки (проверка по Firebase UID и LocalStorage)
         window.rateVideo = async function(isLike) {
+            if (!window.currentUser.loggedIn) {
+                return alert("Сначала войдите в систему через Google!");
+            }
+            
             const video = window.globalVideos.find(v => v.id === window.currentVideoId);
             if(!video) return;
+
+            const lockKey = `btube_vote_${window.currentUser.uid}_${video.id}`;
+            const alreadyVoted = localStorage.getItem(lockKey);
+
+            if (alreadyVoted) {
+                alert(`Вы уже оценили это видео!`);
+                return;
+            }
+
             const target = isLike ? 'likes' : 'dislikes';
             await set(ref(database, `btube_beta_videos/${video.id}/${target}`), (video[target] || 0) + 1);
+            localStorage.setItem(lockKey, isLike ? 'like' : 'dislike');
         };
 
         window.addComment = async function() {
@@ -564,7 +600,7 @@
             document.getElementById('commentInput').value = "";
         };
 
-        // СТАНДАРТНЫЙ ПЛЕЕР УТИЛИТЫ
+        // КЛАССИЧЕСКИЙ ПЛЕЕР
         const vEl = document.getElementById('mainVideo');
         document.getElementById('playBtn').onclick = () => {
             vEl.paused ? vEl.play() : vEl.pause();
