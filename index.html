@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BTube Beta! - Транслируй себя.</title>
+    <title>LOXTube Beta! - Транслируй себя.</title>
+    <!-- Иконка во вкладке браузера -->
     <link rel="shortcut icon" href="ico.ico" type="image/x-icon">
     <style>
-        /* --- КЛАССИЧЕСКИЙ СТИЛЬ BTUBE BETA --- */
+        /* --- КЛАССИЧЕСКИЙ СТИЛЬ LOXTUBE BETA --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: Arial, Helvetica, sans-serif; background: #FFFFFF; color: #333333; font-size: 12px; line-height: 1.3; }
         a { color: #0033CC; text-decoration: none; cursor: pointer; }
@@ -127,11 +128,13 @@
 </head>
 <body>
 
+    <!-- ШАПКА -->
     <div id="masthead">
         <div class="top-section">
             <a onclick="window.navigateTo('home')" class="logo-container">
-                <img src="ico.png" alt="B" class="logo-img" onerror="this.style.display='none'">
-                <div class="logo">B<span>Tube</span><div class="logo-beta">Бета!</div></div>
+                <!-- Иконка сверху кодом это ico.png -->
+                <img src="ico.png" alt="LOX" class="logo-img" onerror="this.style.display='none'">
+                <div class="logo">LOX<span>Tube</span><div class="logo-beta">Бета!</div></div>
             </a>
             <div class="auth-bar" id="authBar"></div>
         </div>
@@ -145,13 +148,15 @@
         </ul>
     </div>
 
+    <!-- КОНТЕНТ -->
     <div id="container">
+        <!-- ГЛАВНАЯ -->
         <div id="view-home" class="view-section active">
             <div class="home-grid">
                 <div class="left-col">
                     <div class="main-block">
                         <h2>Рекомендуемые видео</h2>
-                        <div class="video-grid-old" id="featured-grid">Подключение к BTube DB...</div>
+                        <div class="video-grid-old" id="featured-grid">Подключение к LOXTube DB...</div>
                     </div>
                 </div>
                 <div class="right-col">
@@ -167,6 +172,7 @@
             </div>
         </div>
 
+        <!-- СПИСОК ВИДЕО / РЕЗУЛЬТАТЫ ПОИСКА -->
         <div id="view-videos-list" class="view-section">
             <div class="main-block">
                 <h2 id="browse-title">Все видео</h2>
@@ -174,6 +180,7 @@
             </div>
         </div>
 
+        <!-- ПРОСМОТР ВИДЕО -->
         <div id="view-watch" class="view-section">
             <div class="watch-layout">
                 <div class="watch-main">
@@ -229,9 +236,10 @@
             </div>
         </div>
 
+        <!-- ЗАГРУЗКА ВИДЕО -->
         <div id="view-upload" class="view-section">
             <div class="upload-box-old">
-                <h2>Загрузить видеофайл на BTube</h2>
+                <h2>Загрузить видеофайл на LOXTube</h2>
                 <div class="form-group">
                     <label>Название видео:</label>
                     <input type="text" id="upTitle" placeholder="Введите название...">
@@ -262,6 +270,7 @@
             </div>
         </div>
 
+        <!-- МОЙ КАНАЛ -->
         <div id="view-channel" class="view-section">
             <div class="channel-header">
                 <img src="" class="channel-avatar-big" id="chanAvatar" alt="Avatar">
@@ -285,6 +294,7 @@
             </div>
         </div>
 
+        <!-- ТВОРЧЕСКАЯ СТУДИЯ -->
         <div id="view-studio" class="view-section">
             <div class="main-block">
                 <h2>Творческая студия — Управление видео (Доступно только автору)</h2>
@@ -295,9 +305,10 @@
     </div>
 
     <div id="footer">
-        <p>© 2005-2010 BTube LLC • Karaganda Vibe Beta Edition</p>
+        <p>© 2005-2010 LOXTube LLC • Karaganda Vibe Beta Edition</p>
     </div>
 
+    <!-- FIREBASE СИНХРОНИЗАЦИЯ И ЛОГИКА -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
         import { getDatabase, ref, push, set, onValue, get, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
@@ -445,7 +456,6 @@
             renderViews();
         });
 
-        // Удаление видео — Срабатывает только из панели Творческой Студии автора
         window.deleteVideo = async function(id) {
             if (!confirm("Вы действительно хотите безвозвратно удалить это видео?")) return;
             try {
@@ -523,11 +533,7 @@
             `;
         }
 
-        // Отрисовка карточек для Творческой студии (с возможностью удаления ролика)
         function createStudioCard(v) {
-            const authorData = window.allUsersData[v.authorUid] || {};
-            const currentAvatar = authorData.avatar || v.authorAvatar || DEFAULT_AVATAR;
-
             return `
                 <div class="video-item-old" style="border: 1px dashed #CCC; padding: 5px; background: #FFF;">
                     <div class="thumb-container" onclick="window.openWatch('${v.id}')"><video src="${v.fileUrl}" preload="metadata" muted></video></div>
@@ -560,7 +566,6 @@
             const myVideos = window.globalVideos.filter(v => v.authorUid === window.currentUser.uid);
             document.getElementById('user-uploaded-grid').innerHTML = myVideos.length ? myVideos.map(createCard).join('') : "<p>Вы еще не загрузили ни одного видео.</p>";
 
-            // Рендер Студии управления видео автора
             if(window.currentUser.loggedIn) {
                 document.getElementById('studio-empty-msg').innerText = myVideos.length ? "" : "У вас пока нет загруженных видео для управления.";
                 document.getElementById('studio-uploaded-grid').innerHTML = myVideos.map(createStudioCard).join('');
@@ -590,7 +595,6 @@
             renderViews();
         };
 
-        // Логика просмотра: СТРОГО 1 УНИКАЛЬНЫЙ ПРОСМОТР НА 1 ЧЕЛОВЕКА
         window.openWatch = async function(id) {
             window.currentVideoId = id;
             const video = window.globalVideos.find(v => v.id === id);
@@ -604,15 +608,12 @@
             let allowIncrement = false;
 
             if (window.currentUser.loggedIn) {
-                // Если юзер вошел: проверяем в БД в ветке этого видео по его UID
                 const uid = window.currentUser.uid;
                 if (!video.viewers || !video.viewers[uid]) {
                     allowIncrement = true;
-                    // Помечаем в базе, что этот UID посмотрел видео
                     await set(ref(database, `btube_beta_videos/${id}/viewers/${uid}`), true);
                 }
             } else {
-                // Если гость: проверяем по localStorage браузера, чтобы не спамил F5
                 const localKey = `btube_guest_viewed_${id}`;
                 if (!localStorage.getItem(localKey)) {
                     allowIncrement = true;
@@ -655,7 +656,6 @@
             `).join('') : "<p style='color:#666;'>Комментариев нет.</p>";
             document.getElementById('commentsListContainer').innerHTML = commentsHtml;
 
-            // СИСТЕМА РЕКОМЕНДАЦИЙ
             const currentTags = video.tags.toLowerCase().split(',').map(t => t.trim());
             const recommendations = window.globalVideos
                 .filter(v => v.id !== video.id) 
@@ -721,7 +721,7 @@
             document.getElementById('commentInput').value = "";
         };
 
-        // ПЛЕЕР И УПРАВЛЕНИЕ
+        // ПЛЕЕР
         const vEl = document.getElementById('mainVideo');
         document.getElementById('playBtn').onclick = () => {
             vEl.paused ? vEl.play() : vEl.pause();
