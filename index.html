@@ -6,7 +6,6 @@
     <title>LOXTube Beta! - Транслируй себя.</title>
     <link rel="shortcut icon" href="ico.ico" type="image/x-icon">
     <style>
-        /* --- КЛАССИЧЕСКИЙ СТИЛЬ LOXTUBE BETA --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: Arial, Helvetica, sans-serif; background: #FFFFFF; color: #333333; font-size: 12px; line-height: 1.3; }
         a { color: #0033CC; text-decoration: none; cursor: pointer; }
@@ -22,18 +21,17 @@
         .logo span { background: #FF0000; color: #FFFFFF; padding: 2px 8px; border-radius: 5px; margin-left: 2px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2); }
         .logo-beta { font-size: 12px; color: #FF9800; font-weight: bold; margin-left: 5px; align-self: flex-start; letter-spacing: 0; }
 
-        .auth-bar { font-size: 12px; display: flex; align-items: center; gap: 10px; }
-        .user-menu-wrapper { position: relative; display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
-        .user-info-header { display: flex; align-items: center; gap: 6px; font-weight: bold; }
-        .header-avatar { width: 26px; height: 26px; object-fit: cover; border: 1px solid #999; border-radius: 2px; }
-        
-        .avatar-dropdown { display: none; position: absolute; top: 32px; right: 0; background: #FFFFFF; border: 1px solid #CCCCCC; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 1000; width: 160px; border-radius: 2px; }
-        .avatar-dropdown a { display: block; padding: 6px 10px; color: #0033CC; border-bottom: 1px solid #EEEEEE; font-weight: normal; }
-        .avatar-dropdown a:hover { background: #EAEFFF; text-decoration: none; }
+        .auth-bar { font-size: 12px; display: flex; align-items: center; gap: 15px; }
+        .user-menu-wrapper { display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; background: #F8F8F8; padding: 4px 10px; border: 1px solid #DDD; border-radius: 20px; transition: 0.2s; }
+        .user-menu-wrapper:hover { background: #EEEEEE; }
+        .header-avatar { width: 24px; height: 24px; object-fit: cover; border-radius: 50%; border: 1px solid #999; }
+        .header-username { font-weight: bold; color: #333; font-size: 13px; }
+        .upload-btn-nav { background: #F8F8F8; border: 1px solid #CCCCCC; padding: 5px 10px; font-weight: bold; border-radius: 2px; color: #333; display: none; }
+        .upload-btn-nav:hover { background: #EAEAEA; }
 
         .search-bar-container { display: flex; justify-content: center; align-items: center; background: #F2F2F2; padding: 6px; border: 1px solid #E4E4E4; margin-bottom: 10px; gap: 5px; width: 100%; }
-        .search-input { width: 100%; max-width: 350px; padding: 3px; font-size: 13px; border: 1px solid #CCCCCC; }
-        .search-button { background: #EEEEEE; border: 1px solid #CCCCCC; padding: 2px 8px; font-weight: bold; font-size: 12px; }
+        .search-input { width: 100%; max-width: 350px; padding: 4px; font-size: 13px; border: 1px solid #CCCCCC; }
+        .search-button { background: #EEEEEE; border: 1px solid #CCCCCC; padding: 3px 10px; font-weight: bold; font-size: 12px; }
 
         .nav-tabs { display: flex; list-style: none; border-bottom: 1px solid #CCD2E3; background: #FFFFFF; padding-left: 10px; flex-wrap: wrap; }
         .nav-tabs li { margin-bottom: -1px; margin-right: 3px; }
@@ -59,7 +57,6 @@
         .side-box { background: #F4F8FF; border: 1px solid #D2E1F7; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
         .side-box h3 { font-size: 13px; margin-bottom: 5px; color: #222; }
 
-        /* Страница просмотра */
         .watch-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         .video-player-wrapper { width: 100%; max-width: 640px; background: #000000; position: relative; user-select: none; }
         .video-player-wrapper video { width: 100%; aspect-ratio: 16/9; display: block; background: #000; }
@@ -89,9 +86,8 @@
         .rating-box { display: flex; align-items: center; gap: 10px; margin-top: 10px; justify-content: flex-end; flex-wrap: wrap; }
         .rate-btn { background: #F2F2F2; border: 1px solid #CCCCCC; padding: 5px 10px; font-size: 11px; font-weight: bold; border-radius: 2px; }
         .rate-btn.active { background: #D5E5FF; border-color: #0033CC; }
-        .rate-btn:hover { background: #EAEAEA; }
         
-        .video-desc-text { padding: 10px 5px; font-size: 12px; color: #222; border-bottom: 1px solid #EAEAEA; word-wrap: break-word; }
+        .video-desc-text { padding: 10px 5px; font-size: 12px; color: #222; border-bottom: 1px solid #EAEAEA; word-wrap: break-word; margin-top: 10px; }
 
         .side-video-list { display: flex; flex-direction: column; gap: 10px; }
         .side-video-item { display: flex; gap: 8px; cursor: pointer; align-items: flex-start; }
@@ -99,19 +95,20 @@
         .side-thumb img { width: 100%; height: 100%; object-fit: cover; }
         .side-title { font-weight: bold; color: #0033CC; display: block; font-size: 11px; word-wrap: break-word; }
 
-        /* Профиль канала */
         .channel-header { background: #F0F4FA; border: 1px solid #D7E3F4; padding: 20px; border-radius: 4px; display: flex; align-items: center; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
         .channel-avatar-big { width: 80px; height: 80px; border: 2px solid #FFF; box-shadow: 0 0 3px rgba(0,0,0,0.2); object-fit: cover; }
         .channel-stats { margin-top: 5px; font-size: 13px; color: #555; margin-bottom: 10px; }
 
         .upload-box-old { border: 1px solid #D5D5D5; border-radius: 4px; background: #FAFAFA; max-width: 600px; margin: 30px auto; padding: 20px; }
-        .form-group { margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
-        .form-group input[type="text"], .form-group textarea, .form-group select { width: 100%; padding: 6px; border: 1px solid #CCC; font-size: 12px; }
-        .upload-btn-submit { background: linear-gradient(#0078FF, #0053BA); border: 1px solid #00459B; color: #FFF; font-weight: bold; padding: 10px 16px; border-radius: 3px; cursor: pointer; width: 100%; }
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-weight: bold; font-size: 13px; color: #333; }
+        .form-group input[type="text"], .form-group textarea, .form-group select { width: 100%; padding: 8px; border: 1px solid #CCC; font-size: 13px; border-radius: 2px; }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .upload-btn-submit { background: linear-gradient(#0078FF, #0053BA); border: 1px solid #00459B; color: #FFF; font-weight: bold; padding: 10px 16px; border-radius: 3px; cursor: pointer; width: 100%; font-size: 14px; }
+        .upload-btn-submit:hover { filter: brightness(1.1); }
 
-        .error-msg { background: #FFEBEB; color: #CC0000; padding: 10px; border: 1px solid #CC0000; margin-bottom: 10px; display: none; }
+        .error-msg { background: #FFEBEB; color: #CC0000; padding: 10px; border: 1px solid #CC0000; margin-bottom: 10px; display: none; text-align: center; font-weight: bold; font-size: 14px;}
 
-        /* АДАПТАЦИЯ */
         @media (max-width: 768px) {
             .home-grid, .watch-layout { grid-template-columns: 1fr; }
             .video-grid-old { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
@@ -124,7 +121,7 @@
 
     <div id="masthead">
         <div class="top-section">
-            <a href="#home" class="logo-container">
+            <a onclick="window.navigate('/')" class="logo-container">
                 <img src="ico.png" alt="LOX" class="logo-img" onerror="this.style.display='none'">
                 <div class="logo">LOX<span>Tube</span><div class="logo-beta">Бета!</div></div>
             </a>
@@ -135,15 +132,14 @@
             <button class="search-button" onclick="window.handleSearch()">Поиск</button>
         </div>
         <ul class="nav-tabs">
-            <li id="tab-home" class="active"><a href="#home">Главная</a></li>
-            <li id="tab-videos"><a href="#videos">Все видео</a></li>
+            <li id="tab-home" class="active"><a onclick="window.navigate('/')">Главная</a></li>
+            <li id="tab-videos"><a onclick="window.navigate('/videos')">Все видео</a></li>
         </ul>
     </div>
 
     <div id="container">
         <div class="error-msg" id="globalError">Видео удалено или не существует!</div>
 
-        <!-- ГЛАВНАЯ -->
         <div id="view-home" class="view-section active">
             <div class="home-grid">
                 <div class="left-col">
@@ -155,13 +151,12 @@
                 <div class="right-col">
                     <div class="side-box">
                         <h3>🌐 Добро пожаловать</h3>
-                        <p>Добавлена система подписок, профили по URL и нормальные лайки!</p>
+                        <p>Добавлены красивые профили, удаление мертвых плееров и студия!</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- СПИСОК ВИДЕО (КАТЕГОРИИ И ПАГИНАЦИЯ) -->
         <div id="view-videos" class="view-section">
             <div class="main-block" style="padding: 10px;">
                 <h2 id="browse-title" style="margin-bottom: 15px; border-bottom:none;">Все видео</h2>
@@ -169,7 +164,6 @@
             </div>
         </div>
 
-        <!-- ПРОСМОТР ВИДЕО -->
         <div id="view-watch" class="view-section">
             <div class="watch-layout">
                 <div class="watch-main">
@@ -188,16 +182,15 @@
                     </div>
 
                     <div class="watch-meta-box">
-                        <h1 class="watch-title" id="watchTitle">Название</h1>
+                        <h1 class="watch-title" id="watchTitle">Загрузка...</h1>
                         <div class="watch-stats-line">
-                            <div id="watchTags" style="color: #555;">Теги: </div>
                             <div class="view-count" id="watchViews">0 просмотров</div>
                         </div>
                         <div class="author-section">
-                            <div class="author-info" onclick="window.location.hash = '#channel=' + window.currentVideoAuthorUid">
+                            <div class="author-info" id="watchAuthorArea">
                                 <img src="" class="author-avatar" id="watchAvatar" alt="avatar">
                                 <div>
-                                    <span class="author-name" id="watchAuthorName">Пользователь</span>
+                                    <span class="author-name" id="watchAuthorName">Загрузка...</span>
                                     <div class="author-subs" id="watchAuthorSubs">0 подписчиков</div>
                                 </div>
                             </div>
@@ -218,12 +211,11 @@
             </div>
         </div>
 
-        <!-- ПРОФИЛЬ КАНАЛА -->
         <div id="view-channel" class="view-section">
             <div class="channel-header">
                 <img src="" class="channel-avatar-big" id="chanAvatar" alt="Avatar">
                 <div>
-                    <h2 id="chanName">Никнейм</h2>
+                    <h2 id="chanName">Загрузка...</h2>
                     <div class="channel-stats"><span id="chanSubsCount">0</span> подписчиков</div>
                     <button class="sub-btn" id="chanSubscribeBtn" onclick="window.toggleSubscribe(window.currentChannelUid)">Подписаться</button>
                 </div>
@@ -234,9 +226,36 @@
             </div>
         </div>
 
-        <!-- ЗАГРУЗКА И СТУДИЯ ОСТАЛИСЬ КАК ЕСТЬ НО СКРЫТЫ ДЛЯ КРАТКОСТИ (ОНИ РАБОТАЮТ) -->
         <div id="view-upload" class="view-section">
-            <div class="upload-box-old"><h2>Загрузка... (Перейди в студию)</h2></div>
+            <div class="upload-box-old">
+                <h2 style="margin-bottom: 20px; font-size: 18px;">Загрузить видео</h2>
+                <div class="form-group">
+                    <label>Название видео *</label>
+                    <input type="text" id="upTitle" placeholder="Введите название">
+                </div>
+                <div class="form-group">
+                    <label>Ссылка на видео (.mp4) *</label>
+                    <input type="text" id="upUrl" placeholder="Например: https://tmpfiles.org/api/v1/dl/...">
+                </div>
+                <div class="form-group">
+                    <label>Ссылка на превью (картинка)</label>
+                    <input type="text" id="upThumb" placeholder="URL картинки">
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="upDesc" placeholder="О чем это видео?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Категория</label>
+                    <select id="upCat">
+                        <option>Игры (Games)</option>
+                        <option>Развлечения (Entertainment)</option>
+                        <option>Музыка (Music)</option>
+                        <option>Влоги (Vlogs)</option>
+                    </select>
+                </div>
+                <button class="upload-btn-submit" onclick="window.publishVideo()">Опубликовать видео</button>
+            </div>
         </div>
     </div>
 
@@ -264,17 +283,13 @@
         window.allUsersData = {}; 
         window.currentVideoId = null;
         window.currentChannelUid = null;
-        window.currentVideoAuthorUid = null;
-        let searchQueryStr = "";
+        window.currentVideoLoaded = false;
         let maxVideosLoaded = 20;
 
         // БЕСКОНЕЧНЫЙ СКРОЛЛ
         window.addEventListener('scroll', () => {
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
-                if(maxVideosLoaded < window.globalVideos.length) {
-                    maxVideosLoaded += 20;
-                    renderViews();
-                }
+                if(maxVideosLoaded < window.globalVideos.length) { maxVideosLoaded += 20; renderViews(); }
             }
         });
 
@@ -294,23 +309,35 @@
                 window.currentUser = { loggedIn: false, name: "Гость", uid: null };
             }
             renderAuthBar();
-            renderViews();
+            renderViews(); // Обновляем кнопки подписок и тд после входа
         });
 
         window.handleGoogleSignIn = () => signInWithPopup(auth, new GoogleAuthProvider());
-        window.handleLogOut = () => { signOut(auth); window.location.hash = '#home'; };
+        window.handleLogOut = () => { signOut(auth); window.navigate('/'); };
 
         function renderAuthBar() {
             const authBar = document.getElementById('authBar');
             if (window.currentUser.loggedIn) {
-                authBar.innerHTML = `<a href="#home" onclick="window.handleLogOut()">Выйти</a> | <a href="#channel=${window.currentUser.uid}"><b>Мой профиль</b></a>`;
+                // Красивый профиль + кнопка загрузки
+                authBar.innerHTML = `
+                    <button class="upload-btn-nav" id="uploadNavBtn" onclick="window.navigate('/upload')" style="display:block;">Загрузить</button>
+                    <div class="user-menu-wrapper" onclick="window.navigate('/profile/${window.currentUser.uid}')">
+                        <img src="${window.currentUser.avatar}" class="header-avatar">
+                        <span class="header-username">${window.currentUser.name}</span>
+                    </div>
+                    <a onclick="window.handleLogOut()" style="cursor:pointer; color:#666; font-size:11px;">Выйти</a>
+                `;
             } else {
-                authBar.innerHTML = `<a onclick="window.handleGoogleSignIn()" style="font-weight:bold; color:#4285F4;">Войти</a>`;
+                authBar.innerHTML = `<a onclick="window.handleGoogleSignIn()" style="font-weight:bold; color:#4285F4; cursor:pointer; font-size:14px;">Войти</a>`;
             }
         }
 
-        // ЗАГРУЗКА ДАННЫХ
-        onValue(ref(database, 'btube_users'), (snapshot) => { window.allUsersData = snapshot.val() || {}; renderViews(); });
+        // ЗАГРУЗКА ДАННЫХ В РЕАЛЬНОМ ВРЕМЕНИ
+        onValue(ref(database, 'btube_users'), (snapshot) => { 
+            window.allUsersData = snapshot.val() || {}; 
+            renderViews(); // Авто-обновление аваторок и ников
+        });
+        
         onValue(ref(database, 'btube_beta_videos'), (snapshot) => {
             const data = snapshot.val();
             window.globalVideos = [];
@@ -318,79 +345,97 @@
                 Object.keys(data).forEach(key => window.globalVideos.push({ id: key, ...data[key] }));
                 window.globalVideos.sort((a, b) => b.time - a.time);
             }
-            renderViews();
+            renderViews(); 
         });
 
-        // РОУТИНГ ПО URL (ХЭШ)
-        window.addEventListener('hashchange', handleHash);
-        function handleHash() {
+        // РОУТЕР
+        window.navigate = function(path) {
+            window.history.pushState(null, '', path);
+            handleRoute();
+        };
+
+        window.addEventListener('popstate', handleRoute);
+
+        function handleRoute() {
             document.getElementById('globalError').style.display = 'none';
-            const hash = window.location.hash.substring(1);
+            let path = window.location.pathname;
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('p')) {
+                path = urlParams.get('p');
+                window.history.replaceState(null, '', path);
+            }
+
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-tabs li').forEach(el => el.classList.remove('active'));
-            document.getElementById('mainVideo').pause();
+            
+            const vEl = document.getElementById('mainVideo');
+            if (vEl) vEl.pause();
 
-            if (hash.startsWith('watch=')) {
+            window.currentVideoId = null;
+            window.currentChannelUid = null;
+            window.currentVideoLoaded = false;
+
+            if (path.startsWith('/video/')) {
                 document.getElementById('view-watch').classList.add('active');
-                openWatch(hash.split('=')[1]);
-            } else if (hash.startsWith('channel=')) {
+                window.currentVideoId = path.split('/')[2];
+            } else if (path.startsWith('/profile/')) {
                 document.getElementById('view-channel').classList.add('active');
-                openChannel(hash.split('=')[1]);
-            } else if (hash === 'videos') {
+                window.currentChannelUid = path.split('/')[2];
+            } else if (path === '/videos') {
                 document.getElementById('view-videos').classList.add('active');
                 document.getElementById('tab-videos').classList.add('active');
                 maxVideosLoaded = 20; 
-                renderViews();
+            } else if (path === '/upload') {
+                if(!window.currentUser.loggedIn) return window.navigate('/'); // Защита от гостей
+                document.getElementById('view-upload').classList.add('active');
             } else {
                 document.getElementById('view-home').classList.add('active');
                 document.getElementById('tab-home').classList.add('active');
-                renderViews();
             }
+            renderViews();
         }
 
-        // ГЕНЕРАЦИЯ КАРТОЧЕК
         function createCard(v) {
             const authorData = window.allUsersData[v.authorUid] || {};
             return `
-                <div class="video-item-old" onclick="window.location.hash = '#watch=${v.id}'">
+                <div class="video-item-old" onclick="window.navigate('/video/${v.id}')">
                     <div class="thumb-container"><img src="${v.thumbUrl || DEFAULT_THUMB}" style="width:100%; height:100%; object-fit:cover;"></div>
                     <span class="v-title">${v.title}</span>
                     <div class="v-meta">
-                        <img src="${authorData.avatar || v.authorAvatar || DEFAULT_AVATAR}" style="width:16px; height:16px; border-radius:2px;">
-                        <span>${authorData.name || v.author}</span>
+                        <img src="${authorData.avatar || v.authorAvatar || DEFAULT_AVATAR}" style="width:16px; height:16px; border-radius:50%;">
+                        <span>${authorData.name || "Неизвестно"}</span>
                     </div>
                     <div class="v-meta"><span class="cat-badge">${v.category || 'Игры'}</span> ${v.views || 0} просм.</div>
                 </div>
             `;
         }
 
-        // РЕНДЕР СТРАНИЦ
+        // ОТРИСОВКА (УМНАЯ, ЧТОБЫ ИЗБЕЖАТЬ ПЕРЕЗАГРУЗОК)
         function renderViews() {
-            const activeView = document.querySelector('.view-section.active').id;
+            const activeEl = document.querySelector('.view-section.active');
+            if(!activeEl) return;
+            const activeView = activeEl.id;
             
-            // ГЛАВНАЯ: Рекомендации (сортировка по просмотрам/лайкам, лимит 6)
             if(activeView === 'view-home' && document.getElementById('featured-grid')) {
                 const recs = [...window.globalVideos].sort((a,b) => (b.views||0) - (a.views||0)).slice(0, 6);
                 document.getElementById('featured-grid').innerHTML = recs.map(createCard).join('');
             }
 
-            // ВСЕ ВИДЕО: Сортировка по категориям + лимит загрузки
             if(activeView === 'view-videos') {
                 const categories = ["Игры (Games)", "Развлечения (Entertainment)", "Музыка (Music)", "Влоги (Vlogs)"];
                 let html = "";
                 let displayed = window.globalVideos.slice(0, maxVideosLoaded);
-                
                 categories.forEach(cat => {
                     const catVids = displayed.filter(v => v.category === cat);
                     if(catVids.length > 0) {
-                        html += `<h3 style="margin-top:15px; border-bottom:1px solid #CCC;">${cat}</h3>
+                        html += `<h3 style="margin-top:15px; border-bottom:1px solid #CCC; padding-bottom:5px;">${cat}</h3>
                                  <div class="video-grid-old">${catVids.map(createCard).join('')}</div>`;
                     }
                 });
                 document.getElementById('category-containers').innerHTML = html;
             }
 
-            // КАНАЛ
             if(activeView === 'view-channel' && window.currentChannelUid) {
                 const uData = window.allUsersData[window.currentChannelUid] || {};
                 document.getElementById('chanName').innerText = uData.name || "Пользователь";
@@ -405,116 +450,145 @@
                 checkSubStatus(window.currentChannelUid, 'chanSubscribeBtn');
             }
 
-            // ОБНОВЛЕНИЕ МЕТАДАННЫХ ПРИ ПРОСМОТРЕ
+            // ЛОГИКА ПРОСМОТРА И ЗАГРУЗКИ ВИДЕО В ПЛЕЕР
             if(activeView === 'view-watch' && window.currentVideoId) {
-                const updatedVideo = window.globalVideos.find(v => v.id === window.currentVideoId);
-                if (updatedVideo) renderWatchMeta(updatedVideo);
-            }
-        }
+                const video = window.globalVideos.find(v => v.id === window.currentVideoId);
+                if (video) {
+                    const vEl = document.getElementById('mainVideo');
+                    // Загружаем видео только один раз, чтобы не сбрасывать при лайках
+                    if (!window.currentVideoLoaded) {
+                        vEl.src = video.fileUrl;
+                        vEl.load();
+                        vEl.play().catch(e => document.getElementById('playBtn').innerText = "►");
+                        window.currentVideoLoaded = true;
 
-        // ЛОГИКА ПРОСМОТРА
-        async function openWatch(id) {
-            window.currentVideoId = id;
-            const video = window.globalVideos.find(v => v.id === id);
-            if(!video) { document.getElementById('globalError').style.display = 'block'; return; }
-
-            window.currentVideoAuthorUid = video.authorUid;
-            const vEl = document.getElementById('mainVideo');
-            
-            // ПРОВЕРКА СУЩЕСТВОВАНИЯ ВИДЕО
-            vEl.onerror = () => { document.getElementById('globalError').style.display = 'block'; };
-            vEl.src = video.fileUrl;
-            vEl.load();
-            vEl.play().catch(e => document.getElementById('playBtn').innerText = "►");
-
-            // Просмотры
-            if (window.currentUser.loggedIn) {
-                if (!video.viewers || !video.viewers[window.currentUser.uid]) {
-                    await set(ref(database, `btube_beta_videos/${id}/viewers/${window.currentUser.uid}`), true);
-                    await set(ref(database, `btube_beta_videos/${id}/views`), (video.views || 0) + 1);
+                        // Накрутка 1 просмотра
+                        if (window.currentUser.loggedIn && (!video.viewers || !video.viewers[window.currentUser.uid])) {
+                            set(ref(database, `btube_beta_videos/${window.currentVideoId}/viewers/${window.currentUser.uid}`), true);
+                            set(ref(database, `btube_beta_videos/${window.currentVideoId}/views`), (video.views || 0) + 1);
+                        }
+                    }
+                    renderWatchMeta(video);
                 }
             }
-            renderWatchMeta(video);
         }
 
-        function openChannel(uid) {
-            window.currentChannelUid = uid;
-            renderViews();
-        }
-
+        // ОБНОВЛЕНИЕ ИНФЫ ПОД ВИДЕО
         function renderWatchMeta(video) {
             const authorData = window.allUsersData[video.authorUid] || {};
             document.getElementById('watchTitle').innerText = video.title;
+            document.getElementById('watchDesc').innerText = video.desc || "Нет описания";
             document.getElementById('watchViews').innerText = `${video.views || 0} просмотров`;
-            document.getElementById('watchAuthorName').innerText = authorData.name || video.author;
+            document.getElementById('watchAuthorName').innerText = authorData.name || "Пользователь";
             document.getElementById('watchAvatar').src = authorData.avatar || DEFAULT_AVATAR;
             
             const subs = authorData.subscribers ? Object.keys(authorData.subscribers).length : 0;
             document.getElementById('watchAuthorSubs').innerText = `${subs} подписчиков`;
+            
+            document.getElementById('watchAuthorArea').onclick = () => window.navigate(`/profile/${video.authorUid}`);
 
             checkSubStatus(video.authorUid, 'subscribeBtn');
 
-            // Подсчет лайков из базы
+            // Подсчет лайков
             const votes = video.votes || {};
             let l = 0, d = 0;
             Object.values(votes).forEach(val => { if(val === 'like') l++; else if(val === 'dislike') d++; });
             document.getElementById('likeCount').innerText = l;
             document.getElementById('dislikeCount').innerText = d;
 
-            // Подсветка кнопок
             const myVote = window.currentUser.loggedIn ? votes[window.currentUser.uid] : null;
             document.getElementById('likeBtn').classList.toggle('active', myVote === 'like');
             document.getElementById('dislikeBtn').classList.toggle('active', myVote === 'dislike');
 
-            // Реки сбоку (по совпадению категории)
+            // Рекомендации
             const recs = window.globalVideos.filter(v => v.id !== video.id && v.category === video.category).slice(0, 5);
             document.getElementById('suggestionsContainer').innerHTML = recs.map(r => `
-                <div class="side-video-item" onclick="window.location.hash='#watch=${r.id}'">
+                <div class="side-video-item" onclick="window.navigate('/video/${r.id}')">
                     <div class="side-thumb"><img src="${r.thumbUrl || DEFAULT_THUMB}"></div>
                     <div><span class="side-title">${r.title}</span><span style="font-size:10px; color:#666;">${r.views||0} просм.</span></div>
                 </div>
             `).join('');
         }
 
-        // ИСПРАВЛЕННАЯ СИСТЕМА ЛАЙКОВ (ЧЕРЕЗ БАЗУ ДАННЫХ, ЖЕСТКАЯ ПРИВЯЗКА К АККАУНТУ)
+        // СКРЫТЬ КНОПКУ ПОДПИСКИ НА СЕБЯ
+        function checkSubStatus(targetUid, btnId) {
+            const btn = document.getElementById(btnId);
+            if(!btn) return;
+            // Если гость или это мой же профиль - прячем кнопку
+            if (!window.currentUser.loggedIn || targetUid === window.currentUser.uid) {
+                btn.style.display = 'none';
+                return;
+            }
+            btn.style.display = 'block';
+            const authorData = window.allUsersData[targetUid] || {};
+            const isSubbed = authorData.subscribers && authorData.subscribers[window.currentUser.uid];
+            btn.innerText = isSubbed ? "Отписаться" : "Подписаться";
+            btn.classList.toggle('subscribed', isSubbed);
+        }
+
+        // АВТОУДАЛЕНИЕ МЕРТВЫХ ВИДЕО
+        const vEl = document.getElementById('mainVideo');
+        vEl.onerror = async () => {
+            if (!window.currentVideoId) return;
+            const errBox = document.getElementById('globalError');
+            errBox.style.display = 'block';
+            errBox.innerText = 'Видео удалено с хостинга. Зачистка из базы...';
+            try { await remove(ref(database, `btube_beta_videos/${window.currentVideoId}`)); } catch(e){}
+            setTimeout(() => window.navigate('/'), 2500);
+        };
+
+        // ЛАЙКИ
         window.rateVideo = async function(wantLike) {
             if (!window.currentUser.loggedIn) return alert("Войдите в аккаунт!");
-            const video = window.globalVideos.find(v => v.id === window.currentVideoId);
-            if (!video) return;
-
-            const voteRef = ref(database, `btube_beta_videos/${video.id}/votes/${window.currentUser.uid}`);
+            const voteRef = ref(database, `btube_beta_videos/${window.currentVideoId}/votes/${window.currentUser.uid}`);
             const snapshot = await get(voteRef);
-            const currentVote = snapshot.exists() ? snapshot.val() : null;
-
-            if (currentVote === (wantLike ? 'like' : 'dislike')) {
-                await remove(voteRef); // Убираем лайк
+            if (snapshot.exists() && snapshot.val() === (wantLike ? 'like' : 'dislike')) {
+                await remove(voteRef);
             } else {
-                await set(voteRef, wantLike ? 'like' : 'dislike'); // Ставим или меняем
+                await set(voteRef, wantLike ? 'like' : 'dislike');
             }
         };
 
-        // СИСТЕМА ПОДПИСОК
-        window.toggleSubscribe = async function(targetUid = window.currentVideoAuthorUid) {
-            if (!window.currentUser.loggedIn) return alert("Войдите для подписки!");
-            if (targetUid === window.currentUser.uid) return alert("Нельзя подписаться на себя!");
-
+        // ПОДПИСКИ
+        window.toggleSubscribe = async function(targetUid) {
+            if(!targetUid && window.currentVideoId) {
+                const vid = window.globalVideos.find(v => v.id === window.currentVideoId);
+                targetUid = vid ? vid.authorUid : null;
+            }
+            if (!targetUid || !window.currentUser.loggedIn || targetUid === window.currentUser.uid) return;
+            
             const subRef = ref(database, `btube_users/${targetUid}/subscribers/${window.currentUser.uid}`);
             const snapshot = await get(subRef);
             if (snapshot.exists()) await remove(subRef);
             else await set(subRef, true);
         };
 
-        function checkSubStatus(targetUid, btnId) {
-            const btn = document.getElementById(btnId);
-            if(!btn) return;
-            const authorData = window.allUsersData[targetUid] || {};
-            const isSubbed = window.currentUser.loggedIn && authorData.subscribers && authorData.subscribers[window.currentUser.uid];
-            btn.innerText = isSubbed ? "Отписаться" : "Подписаться";
-            btn.classList.toggle('subscribed', isSubbed);
-        }
+        // ПУБЛИКАЦИЯ ВИДЕО
+        window.publishVideo = async function() {
+            if(!window.currentUser.loggedIn) return alert("Войдите для загрузки!");
+            const title = document.getElementById('upTitle').value;
+            const url = document.getElementById('upUrl').value;
+            if(!title || !url) return alert("Заполни название и ссылку на видео!");
+            
+            const newVideo = {
+                title: title,
+                fileUrl: url,
+                thumbUrl: document.getElementById('upThumb').value || DEFAULT_THUMB,
+                desc: document.getElementById('upDesc').value,
+                category: document.getElementById('upCat').value,
+                authorUid: window.currentUser.uid,
+                time: Date.now(),
+                views: 0
+            };
+            
+            await push(ref(database, 'btube_beta_videos'), newVideo);
+            alert("Видео успешно опубликовано!");
+            document.getElementById('upTitle').value = '';
+            document.getElementById('upUrl').value = '';
+            window.navigate('/');
+        };
 
-        // ПЛЕЕР + ПОЛНОЭКРАННЫЙ РЕЖИМ
-        const vEl = document.getElementById('mainVideo');
+        // ПЛЕЕР КОНТРОЛЫ
         document.getElementById('playBtn').onclick = () => vEl.paused ? vEl.play() : vEl.pause();
         vEl.onplay = () => document.getElementById('playBtn').innerText = "║║";
         vEl.onpause = () => document.getElementById('playBtn').innerText = "►";
@@ -538,8 +612,7 @@
         };
         document.getElementById('volumeSlider').oninput = (e) => vEl.volume = e.target.value;
 
-        // Инициализация при загрузке
-        setTimeout(handleHash, 500); 
+        setTimeout(handleRoute, 300);
     </script>
 </body>
 </html>
