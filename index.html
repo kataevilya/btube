@@ -2,80 +2,285 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>LOXTube - Твой видео-хостинг</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOXTube Beta! - Транслируй себя.</title>
+    <link rel="shortcut icon" href="ico.ico" type="image/x-icon">
     <style>
-        /* КЛАССИЧЕСКИЙ КВАДРАТНЫЙ ИНТЕРФЕЙ */
-        body { font-family: Arial, sans-serif; background: #FFF; margin: 0; color: #000; }
-        #masthead { background: #EAEAEA; border-bottom: 2px solid #999; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-weight: bold; font-size: 24px; cursor: pointer; }
+        /* --- КЛАССИЧЕСКИЙ СТИЛЬ LOXTUBE BETA --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, Helvetica, sans-serif; background: #FFFFFF; color: #333333; font-size: 12px; line-height: 1.3; }
+        a { color: #0033CC; text-decoration: none; cursor: pointer; }
+        a:hover { text-decoration: underline; }
+        button { font-family: Arial, sans-serif; cursor: pointer; }
         
-        /* КВАДРАТНЫЙ ПРОФИЛЬ */
-        .profile-box { border: 1px solid #999; padding: 2px; display: flex; align-items: center; cursor: pointer; background: #FFF; position: relative; }
-        .profile-box img { width: 30px; height: 30px; margin-left: 5px; }
-        .dropdown { display: none; position: absolute; top: 100%; right: 0; background: #FFF; border: 1px solid #999; width: 150px; z-index: 100; }
-        .dropdown a { display: block; padding: 5px; border-bottom: 1px solid #CCC; }
+        #masthead { background: #FFFFFF; padding: 15px 20px 5px 20px; border-bottom: 1px solid #EAEAEA; min-width: 100%; }
+        .top-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
+        
+        .logo-container { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+        .logo-img { width: 32px; height: 32px; object-fit: contain; }
+        .logo { display: flex; align-items: center; font-weight: bold; font-size: 26px; letter-spacing: -1px; color: #000; font-family: "Arial Black", Gadget, sans-serif; }
+        .logo span { background: #FF0000; color: #FFFFFF; padding: 2px 8px; border-radius: 5px; margin-left: 2px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2); }
+        .logo-beta { font-size: 12px; color: #FF9800; font-weight: bold; margin-left: 5px; align-self: flex-start; letter-spacing: 0; }
 
-        .container { max-width: 900px; margin: 20px auto; }
-        .video-box { border: 1px solid #999; padding: 10px; margin-bottom: 10px; }
-        button { background: #CCC; border: 1px solid #666; cursor: pointer; }
-        input, textarea, select { border: 1px solid #999; padding: 5px; }
+        .auth-bar { font-size: 12px; display: flex; align-items: center; gap: 10px; }
+        .user-menu-wrapper { position: relative; display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
+        .user-info-header { display: flex; align-items: center; gap: 6px; font-weight: bold; }
+        .header-avatar { width: 26px; height: 26px; object-fit: cover; border: 1px solid #999; border-radius: 2px; }
+        
+        .avatar-dropdown { display: none; position: absolute; top: 32px; right: 0; background: #FFFFFF; border: 1px solid #CCCCCC; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 1000; width: 160px; border-radius: 2px; }
+        .avatar-dropdown a { display: block; padding: 6px 10px; color: #0033CC; border-bottom: 1px solid #EEEEEE; font-weight: normal; }
+        .avatar-dropdown a:last-child { border-bottom: none; color: #CC0000; }
+        .avatar-dropdown a:hover { background: #EAEFFF; text-decoration: none; }
+
+        .search-bar-container { display: flex; justify-content: center; align-items: center; background: #F2F2F2; padding: 6px; border: 1px solid #E4E4E4; margin-bottom: 10px; gap: 5px; width: 100%; }
+        .search-input { width: 100%; max-width: 350px; padding: 3px; font-size: 13px; border: 1px solid #CCCCCC; }
+        .search-button { background: #EEEEEE; border: 1px solid #CCCCCC; padding: 2px 8px; font-weight: bold; font-size: 12px; }
+
+        .nav-tabs { display: flex; list-style: none; border-bottom: 1px solid #CCD2E3; background: #FFFFFF; padding-left: 10px; flex-wrap: wrap; }
+        .nav-tabs li { margin-bottom: -1px; margin-right: 3px; }
+        .nav-tabs a { display: block; padding: 5px 12px; font-weight: bold; font-size: 13px; color: #0033CC; background: #EAEFFF; border: 1px solid #CCD2E3; border-top-left-radius: 4px; border-top-right-radius: 4px; }
+        .nav-tabs li.active a { background: #FFFFFF; color: #000000; border-bottom-color: #FFFFFF; }
+
+        #container { max-width: 960px; margin: 15px auto; padding: 0 15px; min-height: 500px; }
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+
+        .home-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .main-block { border: 1px solid #D5D5D5; border-radius: 4px; margin-bottom: 15px; overflow: hidden; }
+        .main-block h2 { background: #EAEAEA; padding: 5px 10px; font-size: 13px; color: #333; border-bottom: 1px solid #D5D5D5; display: flex; justify-content: space-between; }
+        .video-grid-old { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; padding: 10px; }
+        
+        .video-item-old { cursor: pointer; display: flex; flex-direction: column; }
+        .thumb-container { position: relative; width: 100%; aspect-ratio: 4/3; background: #000; border: 1px solid #CCCCCC; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .video-item-old .v-title { font-weight: bold; color: #0033CC; margin-top: 4px; font-size: 12px; display: block; word-wrap: break-word; }
+        .video-item-old .v-meta { color: #666666; font-size: 11px; margin-top: 2px; line-height: 1.4; }
+        .cat-badge { background: #E0E0E0; color: #333; padding: 1px 4px; border-radius: 2px; font-size: 9px; font-weight: bold; display: inline-block; }
+
+        .side-box { background: #F4F8FF; border: 1px solid #D2E1F7; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
+        .side-box h3 { font-size: 13px; margin-bottom: 5px; color: #222; }
+
+        /* Страница просмотра */
+        .watch-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .video-player-wrapper { width: 100%; max-width: 640px; background: #000000; position: relative; user-select: none; }
+        .video-player-wrapper video { width: 100%; aspect-ratio: 16/9; display: block; background: #000; }
+        .player-controls { background: #1C1C1C; height: 35px; display: flex; align-items: center; padding: 0 10px; border-top: 1px solid #2A2A2A; color: #EAEAEA; font-size: 11px; gap: 5px; }
+        .play-btn { background: none; border: none; color: #FFF; font-size: 14px; width: 25px; text-align: left; cursor: pointer; }
+        .progress-container { flex-grow: 1; height: 10px; background: #333333; position: relative; cursor: pointer; border-radius: 2px; margin: 0 5px; }
+        .progress-line { position: absolute; left: 0; top: 0; height: 100%; background: #FF0000; width: 0%; border-radius: 2px; }
+        .progress-handle { position: absolute; top: -2px; width: 14px; height: 14px; background: #FFFFFF; border: 1px solid #333; border-radius: 50%; transform: translateX(-50%); pointer-events: none; }
+        .time-disp { white-space: nowrap; margin-right: 5px; min-width: 60px; text-align: center; }
+        .volume-slider { width: 60px; }
+        
+        .watch-meta-box { border: 1px solid #D5D5D5; border-top: none; background: #FAFAFA; padding: 10px; margin-bottom: 15px; }
+        .watch-title { font-size: 18px; font-weight: normal; margin-bottom: 8px; color: #000; word-wrap: break-word; }
+        .watch-stats-line { display: flex; justify-content: space-between; border-bottom: 1px solid #EAEAEA; padding-bottom: 8px; margin-bottom: 8px; flex-wrap: wrap; gap: 5px; }
+        .view-count { font-size: 18px; font-weight: bold; color: #333; }
+        
+        .author-section { display: flex; justify-content: space-between; background: #FFF; border: 1px solid #EAEAEA; padding: 8px; border-radius: 4px; flex-wrap: wrap; gap: 10px; }
+        .author-info { display: flex; gap: 10px; align-items: center; }
+        .author-avatar { width: 35px; height: 35px; border: 1px solid #CCC; object-fit: cover; }
+        .author-name { font-weight: bold; color: #0033CC; font-size: 13px; }
+
+        .rating-box { display: flex; align-items: center; gap: 10px; margin-top: 10px; justify-content: flex-end; flex-wrap: wrap; }
+        .rate-btn { background: #F2F2F2; border: 1px solid #CCCCCC; padding: 5px 10px; font-size: 11px; font-weight: bold; border-radius: 2px; }
+        .rate-btn.active { background: #D5E5FF; border-color: #0033CC; }
+        .rate-btn:hover { background: #EAEAEA; }
+        .rating-bar-bg { width: 100px; height: 4px; background: #CC0000; position: relative; border-radius: 2px; overflow: hidden; }
+        .rating-bar-likes { height: 100%; background: #009900; width: 50%; }
+
+        .video-desc-text { padding: 10px 5px; font-size: 12px; color: #222; border-bottom: 1px solid #EAEAEA; word-wrap: break-word; }
+
+        .comments-header { font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; border-bottom: 1px solid #CCC; padding-bottom: 4px; }
+        .comment-form { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .comment-textarea { flex-grow: 1; height: 50px; padding: 5px; border: 1px solid #CCC; font-size: 12px; min-width: 200px; }
+        .comment-submit { background: #EEEEEE; border: 1px solid #CCCCCC; font-weight: bold; padding: 10px 15px; }
+        .comment-item { display: flex; gap: 10px; border-bottom: 1px dashed #EEE; padding-bottom: 8px; margin-bottom: 8px; }
+        .comment-avatar { width: 30px; height: 30px; border: 1px solid #CCC; object-fit: cover; }
+        .comment-user { font-weight: bold; color: #0033CC; }
+
+        .side-video-list { display: flex; flex-direction: column; gap: 10px; }
+        .side-video-item { display: flex; gap: 8px; cursor: pointer; align-items: flex-start; }
+        .side-thumb { width: 120px; aspect-ratio: 4/3; background: #000; border: 1px solid #CCC; overflow: hidden; display: flex; align-items: center; flex-shrink: 0; }
+        .side-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .side-title { font-weight: bold; color: #0033CC; display: block; font-size: 11px; word-wrap: break-word; }
+
+        .upload-box-old { border: 1px solid #D5D5D5; border-radius: 4px; background: #FAFAFA; max-width: 600px; margin: 30px auto; padding: 20px; }
+        .upload-box-old h2 { font-size: 16px; margin-bottom: 15px; border-bottom: 1px solid #CCC; padding-bottom: 5px; }
+        .form-group { margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
+        .form-group input[type="text"], .form-group textarea, .form-group select { width: 100%; padding: 6px; border: 1px solid #CCC; font-size: 12px; }
+        .form-group textarea { height: 80px; }
+        .upload-btn-submit { background: linear-gradient(#0078FF, #0053BA); border: 1px solid #00459B; color: #FFF; font-weight: bold; padding: 10px 16px; border-radius: 3px; font-size: 13px; margin-top: 10px; cursor: pointer; width: 100%; }
+
+        .channel-header { background: #F0F4FA; border: 1px solid #D7E3F4; padding: 15px; border-radius: 4px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .channel-avatar-big { width: 70px; height: 70px; border: 2px solid #FFF; box-shadow: 0 0 3px rgba(0,0,0,0.2); object-fit: cover; }
+        .avatar-upload-label { background: #EEE; border: 1px solid #CCC; padding: 6px 10px; font-size: 11px; display: inline-block; margin-top: 5px; cursor: pointer; border-radius: 2px; text-align: center; font-weight: bold; }
+        
+        .studio-delete-btn { margin-top: 5px; color: #CC0000; font-weight: bold; background: #FFF; border: 1px solid #CC0000; padding: 5px; border-radius: 2px; cursor: pointer; font-size: 11px; width: 100%; text-align: center; }
+        .studio-delete-btn:hover { background: #FFEBEB; }
+
+        #footer { text-align: center; margin-top: 40px; padding: 20px; border-top: 1px solid #EAEAEA; color: #666; font-size: 11px; }
+
+        /* АДАПТАЦИЯ ДЛЯ ТЕЛЕФОНОВ */
+        @media (max-width: 768px) {
+            .home-grid { grid-template-columns: 1fr; }
+            .watch-layout { grid-template-columns: 1fr; }
+            .upload-box-old { margin: 10px; width: auto; }
+            .video-grid-old { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+            .player-controls { flex-wrap: wrap; height: auto; padding: 5px; }
+            .progress-container { width: 100%; margin: 5px 0; order: -1; }
+            .time-disp { flex-grow: 1; text-align: right; }
+        }
     </style>
 </head>
 <body>
 
-<div id="masthead">
-    <div class="logo" onclick="window.location.reload()">LOXTube</div>
-    <div id="authArea">
-        <button onclick="signIn()">Войти</button>
+    <div id="masthead">
+        <div class="top-section">
+            <a onclick="window.navigateTo('home')" class="logo-container">
+                <img src="ico.png" alt="LOX" class="logo-img" onerror="this.style.display='none'">
+                <div class="logo">LOX<span>Tube</span><div class="logo-beta">Бета!</div></div>
+            </a>
+            <div class="auth-bar" id="authBar"></div>
+        </div>
+        <div class="search-bar-container">
+            <input type="text" id="searchQuery" class="search-input" placeholder="Введите название, описание или теги...">
+            <button class="search-button" onclick="window.handleSearch()">Поиск</button>
+        </div>
+        <ul class="nav-tabs">
+            <li id="tab-home" class="active"><a onclick="window.navigateTo('home')">Главная</a></li>
+            <li id="tab-videos"><a onclick="window.navigateTo('videos-list')">Видео</a></li>
+        </ul>
     </div>
-</div>
 
-<div class="container" id="main">
-    <h3>Загрузить видео</h3>
-    <input type="file" id="videoFile" accept="video/*">
-    <div id="previewContainer"></div>
-    <input type="text" id="vidTitle" placeholder="Название">
-    <button onclick="processVideo()">Обработать и загрузить</button>
-</div>
-
-<script>
-// ГЕНЕРАЦИЯ ПРЕВЬЮ ИЗ ВИДЕО
-async function processVideo() {
-    const file = document.getElementById('videoFile').files[0];
-    const video = document.createElement('video');
-    video.src = URL.createObjectURL(file);
-    
-    const container = document.getElementById('previewContainer');
-    container.innerHTML = "Генерация превью...";
-    
-    setTimeout(() => {
-        container.innerHTML = "";
-        for(let i=1; i<=3; i++) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 160; canvas.height = 90;
-            video.currentTime = i;
-            setTimeout(() => {
-                canvas.getContext('2d').drawImage(video, 0, 0, 160, 90);
-                canvas.onclick = () => alert("Выбрано превью " + i);
-                container.appendChild(canvas);
-            }, 500);
-        }
-    }, 1000);
-}
-
-// ВОЗВРАТ КВАДРАТНОГО МЕНЮ
-function renderProfile(user) {
-    const authArea = document.getElementById('authArea');
-    authArea.innerHTML = `
-        <div class="profile-box" onclick="this.querySelector('.dropdown').style.display='block'">
-            ${user.displayName} <img src="${user.photoURL}">
-            <div class="dropdown">
-                <a href="#">Изменить профиль</a>
-                <a href="#" onclick="logout()">Выйти</a>
+    <div id="container">
+        <div id="view-home" class="view-section active">
+            <div class="home-grid">
+                <div class="left-col">
+                    <div class="main-block">
+                        <h2>Рекомендуемые видео</h2>
+                        <div class="video-grid-old" id="featured-grid">Подключение к LOXTube DB...</div>
+                    </div>
+                </div>
+                <div class="right-col">
+                    <div class="side-box">
+                        <h3>🌐 Уникальная система</h3>
+                        <p>Сайт оптимизирован для телефонов! Добавлены аватарки (превью) для видео, чтобы ничего не лагало.</p>
+                    </div>
+                    <div class="main-block">
+                        <h2>Последние загрузки</h2>
+                        <div style="padding: 10px;" id="side-most-viewed"></div>
+                    </div>
+                </div>
             </div>
         </div>
-    `;
-}
-</script>
-</body>
-</html>
+
+        <div id="view-videos-list" class="view-section">
+            <div class="main-block">
+                <h2 id="browse-title">Все видео</h2>
+                <div class="video-grid-old" id="all-videos-grid"></div>
+            </div>
+        </div>
+
+        <div id="view-watch" class="view-section">
+            <div class="watch-layout">
+                <div class="watch-main">
+                    <div class="video-player-wrapper" id="playerContainer">
+                        <video id="mainVideo" src="" playsinline></video>
+                        <div class="player-controls">
+                            <div class="progress-container" id="progressContainer">
+                                <div class="progress-line" id="progressLine"></div>
+                                <div class="progress-handle" id="progressHandle"></div>
+                            </div>
+                            <button class="play-btn" id="playBtn">►</button>
+                            <div class="time-disp" id="timeDisplay">0:00 / 0:00</div>
+                            <div class="volume-container">
+                                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.1" value="1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="watch-meta-box">
+                        <h1 class="watch-title" id="watchTitle">Название</h1>
+                        <div class="watch-stats-line">
+                            <div id="watchTags" style="color: #555;">Теги: </div>
+                            <div class="view-count" id="watchViews">0 просмотров</div>
+                        </div>
+                        <div class="author-section">
+                            <div class="author-info">
+                                <img src="" class="author-avatar" id="watchAvatar" alt="avatar">
+                                <div><span class="author-name" id="watchAuthorName">Пользователь</span></div>
+                            </div>
+                        </div>
+                        <div class="video-desc-text" id="watchDesc">Описание</div>
+                        
+                        <div class="rating-box">
+                            <button class="rate-btn" id="likeBtn" onclick="window.rateVideo(true)">👍 Нравится (<span id="likeCount">0</span>)</button>
+                            <button class="rate-btn" id="dislikeBtn" onclick="window.rateVideo(false)">👎 Не нравится (<span id="dislikeCount">0</span>)</button>
+                            <div class="rating-bar-bg"><div class="rating-bar-likes" id="ratingBarLikes"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="comments-section">
+                        <div class="comments-header">Комментарии</div>
+                        <div class="comment-form">
+                            <textarea class="comment-textarea" id="commentInput" placeholder="Оставьте комментарий..."></textarea>
+                            <button class="comment-submit" onclick="window.addComment()">Отправить</button>
+                        </div>
+                        <div class="comments-list" id="commentsListContainer"></div>
+                    </div>
+                </div>
+                <div class="watch-sidebar">
+                    <h3>🎭 Рекомендации (Похожие)</h3>
+                    <div class="side-video-list" id="suggestionsContainer"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-upload" class="view-section">
+            <div class="upload-box-old">
+                <h2>Загрузить видеофайл на LOXTube</h2>
+                <div class="form-group">
+                    <label>Название видео:</label>
+                    <input type="text" id="upTitle" placeholder="Введите название...">
+                </div>
+                <div class="form-group">
+                    <label>Категория:</label>
+                    <select id="upCategory">
+                        <option value="Игры (Games)">Игры (Games)</option>
+                        <option value="Развлечения (Entertainment)">Развлечения (Entertainment)</option>
+                        <option value="Музыка (Music)">Музыка (Music)</option>
+                        <option value="Влоги (Vlogs)">Влоги (Vlogs)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Описание:</label>
+                    <textarea id="upDesc" placeholder="Опишите ваше видео..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Теги (через запятую):</label>
+                    <input type="text" id="upTags" placeholder="gaming, retro, 2007">
+                </div>
+                
+                <div class="form-group">
+                    <label>Выберите видеофайл:</label>
+                    <input type="file" id="upFile" accept="video/*" onchange="window.resetThumbs()">
+                </div>
+
+                <div class="form-group" style="background:#F2F2F2; padding:10px; border:1px dashed #CCC;">
+                    <label style="font-weight:bold;">Аватарка видео (Превью):</label>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+                        <button type="button" class="search-button" onclick="window.generateThumbs()">Сгенерировать 3 превью</button>
+                        <label class="search-button" style="cursor:pointer; text-align:center;">
+                            Загрузить свою тумбу
+                            <input type="file" accept="image/*" style="display:none;" onchange="window.handleCustomThumb(event)">
+                        </label>
+                    </div>
+                    <div id="thumbGenContainer" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+                </div>
+
+                <button class="upload-btn-submit" id="uploadActionBtn" onclick="window.handleVideoUpload()">Опубликовать видео</button>
+                <div id="uploadStatus" style="margin-top:10px; color:#009900; font-weight:bold;"></div>
+            </div>
+        </div>
+
+        <div id="view-channel" class="vie
