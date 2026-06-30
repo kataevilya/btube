@@ -3,45 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOXTube - Твой видео-хостинг</title>
-    <link rel="shortcut icon" href="ico.ico" type="image/x-icon">
+    <title>LOXTube</title>
     <style>
-        /* СТРОГИЙ КВАДРАТНЫЙ ДИЗАЙН */
-        * { box-sizing: border-box; margin: 0; padding: 0; border-radius: 0 !important; }
-        body { font-family: Arial, Helvetica, sans-serif; background: #FFFFFF; color: #000000; font-size: 12px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; border-radius: 0 !important; font-family: Arial, Helvetica, sans-serif; }
+        body { background: #FFFFFF; color: #000000; font-size: 12px; }
         a { color: #0033CC; text-decoration: none; cursor: pointer; }
         a:hover { text-decoration: underline; }
-        button { cursor: pointer; background: #DDDDDD; border: 1px solid #999999; padding: 5px 10px; color: #000; font-family: Arial; }
+        button { cursor: pointer; background: #DDDDDD; border: 1px solid #999999; padding: 5px 10px; color: #000; }
         button:hover { background: #CCCCCC; }
-        input, textarea, select { border: 1px solid #999999; padding: 4px; font-family: Arial; }
+        input, textarea, select { border: 1px solid #999999; padding: 4px; }
 
-        /* ШАПКА */
         #masthead { background: #EAEAEA; border-bottom: 1px solid #999999; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; }
         .logo-container { font-weight: bold; font-size: 24px; color: #000; text-decoration: none; display: flex; align-items: center; gap: 5px; }
-        .logo-container img { width: 30px; height: 30px; }
 
-        /* МЕНЮ ПРОФИЛЯ В УГЛУ */
         .auth-bar { display: flex; align-items: center; gap: 15px; }
-        .upload-btn-nav { font-weight: bold; display: none; }
+        .upload-btn-nav { font-weight: bold; }
         
         .profile-menu { position: relative; display: inline-block; cursor: pointer; border: 1px solid #999; padding: 2px 5px; background: #FFF; }
         .profile-menu-content { display: flex; align-items: center; gap: 5px; }
         .square-avatar { width: 28px; height: 28px; border: 1px solid #666; object-fit: cover; }
         .profile-name { font-weight: bold; font-size: 12px; }
         
-        /* ВЫПАДАЮЩЕЕ МЕНЮ */
         .dropdown-content { display: none; position: absolute; right: -1px; top: 100%; background-color: #FFFFFF; min-width: 130px; border: 1px solid #999; z-index: 100; margin-top: 2px; }
         .dropdown-content a { color: black; padding: 8px 10px; text-decoration: none; display: block; border-bottom: 1px solid #EEE; font-size: 12px; }
         .dropdown-content a:hover { background-color: #EAEAEA; text-decoration: none; }
-        .profile-menu:hover .dropdown-content { display: block; }
+        .profile-menu.open .dropdown-content { display: block; }
 
-        /* НАВИГАЦИЯ */
         .nav-tabs { display: flex; list-style: none; background: #FFFFFF; border-bottom: 1px solid #999; padding: 5px 10px 0 10px; margin-bottom: 15px; }
         .nav-tabs li { margin-right: 5px; margin-bottom: -1px; }
         .nav-tabs a { display: block; padding: 5px 15px; font-weight: bold; background: #EAEAEA; border: 1px solid #999; color: #0033CC; }
         .nav-tabs li.active a { background: #FFFFFF; border-bottom-color: #FFFFFF; color: #000; }
 
-        /* КОНТЕЙНЕРЫ И СЕТКА */
         #container { max-width: 960px; margin: 0 auto; padding: 0 15px; min-height: 500px; }
         .view-section { display: none; }
         .view-section.active { display: block; }
@@ -55,72 +47,50 @@
         .v-title { font-weight: bold; color: #0033CC; margin-top: 5px; font-size: 12px; }
         .v-meta { color: #666; font-size: 11px; margin-top: 2px; }
 
-        /* СТУДИЯ И ЗАГРУЗКА */
         .upload-box { padding: 20px; }
         .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 5px; }
         .form-group label { font-weight: bold; }
         .form-group input[type="text"], .form-group textarea { width: 100%; max-width: 500px; }
         
-        /* ГЕНЕРАТОР ПРЕВЬЮ */
         .thumb-generator-area { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-        .generated-thumb { width: 160px; height: 90px; border: 2px solid #999; cursor: pointer; background: #000; object-fit: cover; }
+        .generated-thumb { width: 160px; height: 90px; border: 1px solid #999; cursor: pointer; background: #000; object-fit: cover; }
         .generated-thumb.selected { border: 3px solid #CC0000; }
         .loading-text { color: #CC0000; font-weight: bold; display: none; margin-top: 10px; }
 
-        /* ПЛЕЕР И ПРОСМОТР */
-        .watch-layout { display: flex; gap: 15px; }
+        .watch-layout { display: flex; gap: 15px; padding: 10px; }
         .watch-main { flex: 1; }
-        .watch-sidebar { width: 300px; }
         .player-wrapper { width: 100%; background: #000; border: 1px solid #666; }
         .player-wrapper video { width: 100%; aspect-ratio: 16/9; display: block; }
         .video-info { border: 1px solid #999; padding: 10px; margin-top: 10px; background: #F9F9F9; }
-        .video-info h1 { font-size: 16px; margin-bottom: 5px; }
-        
-        .author-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px dotted #999; }
-        .author-profile { display: flex; align-items: center; gap: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div id="masthead">
-        <a onclick="window.navigate('/')" class="logo-container">
-            <img src="ico.png" onerror="this.style.display='none'">
-            LOXTube
-        </a>
-        <div class="auth-bar" id="authBar">
-            </div>
+        <a onclick="window.navigate('/')" class="logo-container">LOXTube</a>
+        <div class="auth-bar" id="authBar"></div>
     </div>
 
     <ul class="nav-tabs">
         <li id="tab-home" class="active"><a onclick="window.navigate('/')">Главная</a></li>
-        <li id="tab-videos"><a onclick="window.navigate('/videos')">Все видео</a></li>
     </ul>
 
     <div id="container">
         
         <div id="view-home" class="view-section active">
             <div class="main-block">
-                <h2>Рекомендации</h2>
-                <div class="video-grid" id="home-grid">Загрузка...</div>
-            </div>
-        </div>
-
-        <div id="view-videos" class="view-section">
-            <div class="main-block">
                 <h2>Все видео</h2>
-                <div class="video-grid" id="all-grid"></div>
+                <div class="video-grid" id="home-grid">Загрузка...</div>
             </div>
         </div>
 
         <div id="view-channel" class="view-section">
             <div class="main-block">
-                <h2 id="chanNameTitle">Профиль пользователя</h2>
+                <h2>Профиль</h2>
                 <div style="padding: 10px; display: flex; gap: 15px; border-bottom: 1px solid #999;">
                     <img id="chanAvatar" class="square-avatar" style="width: 80px; height: 80px;">
                     <div>
                         <h3 id="chanName">Имя</h3>
-                        <div id="chanSubs">0 подписчиков</div>
-                        <button id="subBtn" style="margin-top: 5px; display:none;" onclick="window.toggleSub()">Подписаться</button>
                     </div>
                 </div>
                 <div class="video-grid" id="channel-grid"></div>
@@ -128,31 +98,18 @@
         </div>
 
         <div id="view-watch" class="view-section">
-            <div class="watch-layout">
-                <div class="watch-main">
-                    <div class="player-wrapper">
-                        <video id="mainVideo" controls></video>
-                    </div>
-                    <div class="video-info">
-                        <h1 id="watchTitle">Название</h1>
-                        <div id="watchViews" style="font-weight: bold; color: #333;">0 просмотров</div>
-                        
-                        <div class="author-row">
-                            <div class="author-profile" id="watchAuthorArea">
-                                <img id="watchAvatar" class="square-avatar" style="width: 40px; height: 40px;">
-                                <div style="font-weight: bold; color: #0033CC;" id="watchAuthorName">Имя</div>
-                            </div>
-                            <div>
-                                <button id="likeBtn" onclick="window.rate(true)">👍 <span id="likeCount">0</span></button>
-                                <button id="dislikeBtn" onclick="window.rate(false)">👎 <span id="dislikeCount">0</span></button>
-                            </div>
+            <div class="main-block">
+                <h2>Просмотр</h2>
+                <div class="watch-layout">
+                    <div class="watch-main">
+                        <div class="player-wrapper">
+                            <video id="mainVideo" controls></video>
                         </div>
-                        <div style="margin-top: 15px; border-top: 1px solid #CCC; padding-top: 10px;" id="watchDesc">Описание</div>
+                        <div class="video-info">
+                            <h1 id="watchTitle">Название</h1>
+                            <div style="margin-top: 15px; border-top: 1px solid #CCC; padding-top: 10px;" id="watchDesc">Описание</div>
+                        </div>
                     </div>
-                </div>
-                <div class="watch-sidebar main-block">
-                    <h2>Похожие</h2>
-                    <div id="recsContainer" style="padding: 10px; display: flex; flex-direction: column; gap: 10px;"></div>
                 </div>
             </div>
         </div>
@@ -162,15 +119,15 @@
                 <h2>Загрузить видео</h2>
                 <div class="upload-box">
                     <div class="form-group">
-                        <label>1. Выберите видео-файл (MP4)</label>
+                        <label>1. Выберите файл видео (MP4)</label>
                         <input type="file" id="videoFileInput" accept="video/*" onchange="window.generateThumbnails()">
                         <video id="hiddenThumbVideo" style="display:none;" muted></video>
                     </div>
                     
                     <div class="form-group">
-                        <label>2. Выберите превью (сгенерировано автоматически):</label>
+                        <label>2. Выберите превью (генерируется автоматически):</label>
                         <div class="thumb-generator-area" id="thumbsArea">
-                            <i>Сначала выберите файл...</i>
+                            <i>Сначала выберите файл</i>
                         </div>
                     </div>
 
@@ -184,17 +141,8 @@
                         <textarea id="upDesc"></textarea>
                     </div>
 
-                    <div class="form-group">
-                        <label>Категория</label>
-                        <select id="upCat">
-                            <option>Игры</option>
-                            <option>Развлечения</option>
-                            <option>Музыка</option>
-                        </select>
-                    </div>
-
-                    <button id="uploadBtnFinal" style="font-weight:bold;" onclick="window.uploadVideo()">Загрузить на сервер</button>
-                    <div id="uploadStatus" class="loading-text">Загрузка файла... Пожалуйста, подождите.</div>
+                    <button id="uploadBtnFinal" style="font-weight:bold;" onclick="window.uploadVideo()">Опубликовать</button>
+                    <div id="uploadStatus" class="loading-text">Загрузка файла на сервер...</div>
                 </div>
             </div>
         </div>
@@ -203,7 +151,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getDatabase, ref, push, set, get, remove, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+        import { getDatabase, ref, push, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -224,18 +172,12 @@
         window.allUsersData = {}; 
         window.selectedThumbBase64 = null;
 
-        // АВТОРИЗАЦИЯ
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 window.currentUser = { loggedIn: true, uid: user.uid, name: user.displayName, avatar: user.photoURL };
                 const userRef = ref(database, 'btube_users/' + user.uid);
                 const snapshot = await get(userRef);
-                if (snapshot.exists()) {
-                    window.currentUser.name = snapshot.val().name || user.displayName;
-                    window.currentUser.avatar = snapshot.val().avatar || user.photoURL;
-                } else {
-                    await set(userRef, { name: window.currentUser.name, avatar: window.currentUser.avatar });
-                }
+                if (!snapshot.exists()) await set(userRef, { name: window.currentUser.name, avatar: window.currentUser.avatar });
             } else {
                 window.currentUser = { loggedIn: false };
             }
@@ -249,25 +191,23 @@
             const authBar = document.getElementById('authBar');
             if (window.currentUser.loggedIn) {
                 authBar.innerHTML = `
-                    <button class="upload-btn-nav" style="display:inline-block; margin-right:10px;" onclick="window.navigate('/upload')">Загрузить</button>
-                    <div class="profile-menu">
+                    <button class="upload-btn-nav" onclick="window.navigate('/upload')">Загрузить</button>
+                    <div class="profile-menu" onclick="this.classList.toggle('open')">
                         <div class="profile-menu-content">
                             <span class="profile-name">${window.currentUser.name}</span>
                             <img src="${window.currentUser.avatar}" class="square-avatar">
                         </div>
                         <div class="dropdown-content">
-                            <a onclick="window.navigate('/profile/${window.currentUser.uid}')">Мой профиль</a>
-                            <a onclick="alert('Тут будет настройка')">Изменить профиль</a>
+                            <a onclick="window.navigate('/profile/${window.currentUser.uid}')">Изменить профиль</a>
                             <a onclick="window.logout()">Выйти</a>
                         </div>
                     </div>
                 `;
             } else {
-                authBar.innerHTML = `<button onclick="window.login()" style="font-weight:bold;">Войти</button>`;
+                authBar.innerHTML = `<button onclick="window.login()">Войти</button>`;
             }
         }
 
-        // БД
         onValue(ref(database, 'btube_users'), (s) => { window.allUsersData = s.val() || {}; renderViews(); });
         onValue(ref(database, 'btube_beta_videos'), (s) => {
             window.globalVideos = [];
@@ -276,18 +216,12 @@
             renderViews(); 
         });
 
-        // РОУТИНГ (РАБОТАЕТ С ПРЯМЫМИ ССЫЛКАМИ ЧЕРЕЗ 404 ИЛИ БЕЗ)
         window.navigate = function(path) { window.history.pushState(null, '', path); handleRoute(); };
         window.addEventListener('popstate', handleRoute);
 
         function handleRoute() {
             let path = window.location.pathname;
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('p')) { path = urlParams.get('p'); window.history.replaceState(null, '', path); }
-
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-tabs li').forEach(el => el.classList.remove('active'));
-            
             document.getElementById('mainVideo').pause();
 
             if (path.startsWith('/video/')) {
@@ -296,99 +230,59 @@
             } else if (path.startsWith('/profile/')) {
                 document.getElementById('view-channel').classList.add('active');
                 window.currentChan = path.split('/')[2];
-            } else if (path === '/videos') {
-                document.getElementById('view-videos').classList.add('active');
-                document.getElementById('tab-videos').classList.add('active');
             } else if (path === '/upload') {
                 if(!window.currentUser.loggedIn) return window.navigate('/');
                 document.getElementById('view-upload').classList.add('active');
             } else {
                 document.getElementById('view-home').classList.add('active');
-                document.getElementById('tab-home').classList.add('active');
             }
             renderViews();
         }
 
         function createCard(v) {
-            const author = window.allUsersData[v.authorUid] || {};
             return `
                 <div class="video-item" onclick="window.navigate('/video/${v.id}')">
                     <div class="thumb-box"><img src="${v.thumbUrl || DEFAULT_AVATAR}"></div>
                     <div class="v-title">${v.title}</div>
-                    <div class="v-meta">От: ${author.name || "Гость"}<br>${v.views || 0} просм.</div>
                 </div>
             `;
         }
 
         function renderViews() {
             const activeView = document.querySelector('.view-section.active').id;
-            
             if(activeView === 'view-home') {
-                document.getElementById('home-grid').innerHTML = window.globalVideos.slice(0, 10).map(createCard).join('');
-            }
-            if(activeView === 'view-videos') {
-                document.getElementById('all-grid').innerHTML = window.globalVideos.map(createCard).join('');
+                document.getElementById('home-grid').innerHTML = window.globalVideos.map(createCard).join('');
             }
             if(activeView === 'view-channel' && window.currentChan) {
                 const uData = window.allUsersData[window.currentChan] || {};
                 document.getElementById('chanName').innerText = uData.name || "Пользователь";
                 document.getElementById('chanAvatar').src = uData.avatar || DEFAULT_AVATAR;
-                
                 const myVids = window.globalVideos.filter(v => v.authorUid === window.currentChan);
                 document.getElementById('channel-grid').innerHTML = myVids.map(createCard).join('');
-                
-                const btn = document.getElementById('subBtn');
-                if(window.currentUser.loggedIn && window.currentChan !== window.currentUser.uid) {
-                    btn.style.display = 'block';
-                    btn.innerText = (uData.subscribers && uData.subscribers[window.currentUser.uid]) ? "Отписаться" : "Подписаться";
-                } else btn.style.display = 'none';
             }
             if(activeView === 'view-watch' && window.currentVid) {
                 const v = window.globalVideos.find(x => x.id === window.currentVid);
                 if(v) {
                     const vidEl = document.getElementById('mainVideo');
                     if(vidEl.src !== v.fileUrl) { vidEl.src = v.fileUrl; vidEl.play().catch(()=>{}); }
-                    
                     document.getElementById('watchTitle').innerText = v.title;
                     document.getElementById('watchDesc').innerText = v.desc;
-                    document.getElementById('watchViews').innerText = `${v.views||0} просмотров`;
-                    
-                    const author = window.allUsersData[v.authorUid] || {};
-                    document.getElementById('watchAuthorName').innerText = author.name || "Пользователь";
-                    document.getElementById('watchAvatar').src = author.avatar || DEFAULT_AVATAR;
-                    document.getElementById('watchAuthorArea').onclick = () => window.navigate(`/profile/${v.authorUid}`);
-
-                    // Реки
-                    document.getElementById('recsContainer').innerHTML = window.globalVideos.filter(x => x.id !== v.id).slice(0,4).map(r => `
-                        <div style="display:flex; gap:10px; cursor:pointer;" onclick="window.navigate('/video/${r.id}')">
-                            <div class="thumb-box" style="width:120px; height:68px;"><img src="${r.thumbUrl}"></div>
-                            <div>
-                                <div style="font-weight:bold; font-size:11px; color:#0033CC;">${r.title}</div>
-                                <div style="font-size:10px; color:#666;">${r.views||0} просм.</div>
-                            </div>
-                        </div>
-                    `).join('');
                 }
             }
         }
 
-        // ГЕНЕРАЦИЯ ПРЕВЬЮ ИЗ ФАЙЛА
         window.generateThumbnails = function() {
             const file = document.getElementById('videoFileInput').files[0];
             if(!file) return;
-            
             const url = URL.createObjectURL(file);
             const vid = document.getElementById('hiddenThumbVideo');
             const thumbsArea = document.getElementById('thumbsArea');
-            thumbsArea.innerHTML = "<i>Генерируем кадры...</i>";
-            
+            thumbsArea.innerHTML = "<i>Генерация кадров...</i>";
             vid.src = url;
             vid.addEventListener('loadeddata', () => {
                 thumbsArea.innerHTML = "";
-                const duration = vid.duration;
-                // Берем 3 кадра: начало, середина, конец
-                const times = [1, duration / 2, duration - 1]; 
-                
+                const duration = vid.duration || 3;
+                const times = [duration * 0.25, duration * 0.5, duration * 0.75]; 
                 times.forEach((time, index) => {
                     const tempVid = document.createElement('video');
                     tempVid.src = url;
@@ -397,16 +291,14 @@
                         const canvas = document.createElement('canvas');
                         canvas.width = 320; canvas.height = 180;
                         canvas.getContext('2d').drawImage(tempVid, 0, 0, 320, 180);
-                        
                         const img = document.createElement('img');
-                        img.src = canvas.toDataURL('image/jpeg', 0.7); // Сжимаем в base64
+                        img.src = canvas.toDataURL('image/jpeg', 0.7);
                         img.className = 'generated-thumb';
                         img.onclick = () => {
                             document.querySelectorAll('.generated-thumb').forEach(el => el.classList.remove('selected'));
                             img.classList.add('selected');
                             window.selectedThumbBase64 = img.src;
                         };
-                        
                         if(index === 0) { img.classList.add('selected'); window.selectedThumbBase64 = img.src; }
                         thumbsArea.appendChild(img);
                     });
@@ -414,43 +306,30 @@
             }, {once: true});
         };
 
-        // ЗАГРУЗКА НА СЕРВЕР (Через tmpfiles API, чтобы хранить сам MP4 файл)
         window.uploadVideo = async function() {
             const file = document.getElementById('videoFileInput').files[0];
             const title = document.getElementById('upTitle').value;
-            if(!file || !title) return alert("Выберите файл и напишите название!");
-            
+            if(!file || !title) return alert("Выберите файл и напишите название");
             document.getElementById('uploadStatus').style.display = 'block';
             document.getElementById('uploadBtnFinal').disabled = true;
-            
             try {
-                // Грузим видео-файл на бесплатный временный хостинг (или используйте свой, если есть)
                 const formData = new FormData();
                 formData.append('file', file);
-                
                 const res = await fetch('https://tmpfiles.org/api/v1/upload', { method: 'POST', body: formData });
                 const data = await res.json();
-                
-                // tmpfiles дает ссылку вида /12345/vid.mp4, нам нужна прямая /api/v1/dl/12345/vid.mp4
                 const directMp4Url = data.data.url.replace('tmpfiles.org/', 'tmpfiles.org/api/v1/dl/');
-
                 const newVideo = {
                     title: title,
                     fileUrl: directMp4Url,
                     thumbUrl: window.selectedThumbBase64 || DEFAULT_AVATAR,
                     desc: document.getElementById('upDesc').value,
-                    category: document.getElementById('upCat').value,
                     authorUid: window.currentUser.uid,
-                    time: Date.now(),
-                    views: 0
+                    time: Date.now()
                 };
-                
                 await push(ref(database, 'btube_beta_videos'), newVideo);
-                alert("Видео успешно опубликовано!");
                 window.navigate('/');
-                
             } catch(e) {
-                alert("Ошибка загрузки файла. " + e);
+                alert("Ошибка");
             } finally {
                 document.getElementById('uploadStatus').style.display = 'none';
                 document.getElementById('uploadBtnFinal').disabled = false;
